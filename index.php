@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($SITE['name']) ?> — ডিজিটাল কোর্সের হাট</title>
-<meta name="description" content="Facebook Page Monetization ও YouTube Monetization — মাত্র ১০০ টাকায় ১৫টি সিস্টেম। bKash/Nagad পেমেন্ট, সাথে সাথে Telegram অ্যাক্সেস।">
+<meta name="description" content="Facebook Page Monetization ও YouTube Monetization — প্রতিটি কোর্স মাত্র ২০০ টাকায়, রেফারে প্রথম কোর্সে ১০০ টাকা ছাড়। bKash/Nagad পেমেন্ট, সাথে সাথে Telegram অ্যাক্সেস।">
 <link rel="icon" href="assets/logo.webp">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -48,6 +48,26 @@
   .how{background:rgba(18,4,46,.66);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:24px;margin:26px 0;text-align:center;backdrop-filter:blur(6px)}
   .how h3{font-size:21px;margin-bottom:12px}
   .how p{color:#d9cdf7;line-height:1.9}
+  /* প্রতিটি লাইনে ম্যাজিকের মতো নড়াচড়া — লোড ও স্ক্রলে ধাপে ধাপে জীবন্ত হয়ে ওঠে */
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes shineMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes sweep{0%{left:-80%}100%{left:130%}}
+  @keyframes liIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+  .hero .badge{animation:rise .7s .05s both;position:relative;overflow:hidden}
+  .hero .badge::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);animation:sweep 3.2s ease-in-out infinite}
+  .hero h1{animation:rise .8s .15s both,floaty 7s 1s ease-in-out infinite}
+  .hero .sub{animation:rise .8s .3s both}
+  .hero .chips{animation:rise .8s .45s both}
+  .hero .chip{animation:floaty 5s ease-in-out infinite}
+  .hero .chip:nth-child(2){animation-delay:.6s}.hero .chip:nth-child(3){animation-delay:1.2s}.hero .chip:nth-child(4){animation-delay:1.8s}.hero .chip:nth-child(5){animation-delay:2.4s}
+  .systems li{opacity:0}
+  .systems.in li{animation:liIn .55s both;animation-delay:calc(var(--i)*75ms)}
+  .card{transition:transform .35s ease,box-shadow .35s ease}
+  .card:hover{transform:translateY(-6px);box-shadow:0 18px 44px rgba(255,79,216,.22)}
+  .mission h2{background-size:220% auto;animation:shineMove 6s linear infinite}
+  .discount-note{background:rgba(45,212,238,.12);border:1px solid rgba(45,212,238,.5);color:#a5f3fc;border-radius:12px;padding:10px 12px;font-size:15px;font-weight:700;text-align:center;margin-top:12px;animation:floaty 5.5s ease-in-out infinite}
+  @media (prefers-reduced-motion: reduce){.hero h1,.hero .chip,.discount-note{animation:none}.systems li{opacity:1}}
   .mission{text-align:center;padding:54px 10px 8px}
   .mission h2{font-size:clamp(40px,8.5vw,80px);font-weight:900;line-height:1.2;background:linear-gradient(90deg,#ff4fd8,#a855f7,#2dd4ee);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
   .mission p{color:#d9cdf7;font-size:clamp(15px,2.4vw,19px);margin-top:12px}
@@ -76,13 +96,13 @@
   <section class="hero">
     <div class="badge">অনলাইন ইনকাম কোর্স · স্টেপ বাই স্টেপ · প্রাইভেট গ্রুপ</div>
     <h1>চেহারা না দেখিয়ে<br><span class="hl">Facebook</span> ও <span class="hl">YouTube</span><br>মনিটাইজেশন শিখুন</h1>
-    <p class="sub">পেজ/চ্যানেল সেটআপ থেকে মনিটাইজেশন পর্যন্ত — সবকিছু ধাপে ধাপে। মাত্র ১০০ টাকায় শিখুন <b>১৫টি সিস্টেম</b>, কেনার সাথে সাথে প্রাইভেট Telegram গ্রুপে অ্যাক্সেস।</p>
+    <p class="sub">পেজ ও চ্যানেল সেটআপ থেকে মনিটাইজেশন পর্যন্ত — প্রতিটি কোর্সে পূর্ণাঙ্গ, ধাপে ধাপে সাজানো পাঠ্যক্রম। কেনার সাথে সাথে প্রাইভেট Telegram গ্রুপে অ্যাক্সেস।</p>
     <div class="chips">
-      <div class="chip">১৫টি সিস্টেম</div>
+      <div class="chip">পূর্ণাঙ্গ পাঠ্যক্রম</div>
       <div class="chip">ভিডিও তৈরির টিউটোরিয়াল</div>
       <div class="chip">AI Automation</div>
       <div class="chip">প্রতিদিন লাইভ সাপোর্ট</div>
-      <div class="chip">মাত্র ১০০ টাকা</div>
+      <div class="chip">মাত্র ২০০ টাকায় কোর্স</div>
     </div>
   </section>
 
@@ -93,38 +113,48 @@
       <h2><?= htmlspecialchars($c['name']) ?></h2>
       <p><?= htmlspecialchars($c['desc']) ?></p>
       <div class="price"><?= $c['price'] ?> টাকা<small>একবার পেমেন্ট, Telegram-এ সাথে সাথে অ্যাক্সেস</small></div>
-      <button class="buy" onclick="openBuy('<?= $c['id'] ?>','<?= htmlspecialchars($c['name'], ENT_QUOTES) ?>')">এখনই কিনুন <?= $c['price'] ?> টাকায়</button>
+      <div class="discount-note">রেফার লিংক দিয়ে অ্যাকাউন্ট খুললেই প্রথম কোর্সে ১০০ টাকা ছাড়</div>
+      <button class="buy" onclick="openBuy('<?= $c['id'] ?>','<?= htmlspecialchars($c['name'], ENT_QUOTES) ?>',<?= $c['price'] ?>)">এখনই কিনুন <?= $c['price'] ?> টাকায়</button>
     </div>
     <?php endforeach; ?>
   </section>
 
   <section class="systems reveal">
-    <h3>১০০ টাকায় যা যা পাচ্ছেন 🤯</h3>
-    <div class="lead">একটাই প্যাকেজে পুরো ১৫টি সিস্টেম — Facebook + YouTube দুটোই</div>
+    <h3>Facebook Page Monetization — পাঠ্যক্রমে যা যা থাকছে</h3>
+    <div class="lead">কোর্স ফি মাত্র ২০০ টাকা</div>
     <ul>
-      <?php foreach ($SYSTEMS as $s): ?><li><?= htmlspecialchars($s) ?></li><?php endforeach; ?>
+      <?php foreach ($FB_SYSTEMS as $i => $s): ?><li style="--i:<?= $i ?>"><?= htmlspecialchars($s) ?></li><?php endforeach; ?>
     </ul>
-    <button class="buy" onclick="openBuy('facebook-monetization','Facebook Page Monetization')">মাত্র ১০০ টাকায় সবগুলো নিন</button>
+    <button class="buy" onclick="openBuy('facebook-monetization','Facebook Page Monetization',200)">কোর্সটি কিনুন — ২০০ টাকা</button>
+  </section>
+
+  <section class="systems reveal">
+    <h3>YouTube Monetization — পাঠ্যক্রমে যা যা থাকছে</h3>
+    <div class="lead">কোর্স ফি মাত্র ২০০ টাকা</div>
+    <ul>
+      <?php foreach ($YT_SYSTEMS as $i => $s): ?><li style="--i:<?= $i ?>"><?= htmlspecialchars($s) ?></li><?php endforeach; ?>
+    </ul>
+    <button class="buy" onclick="openBuy('youtube-monetization','YouTube Monetization',200)">কোর্সটি কিনুন — ২০০ টাকা</button>
   </section>
 
   <section class="systems reveal">
     <h3>শুধু কোর্স না — সাথে থাকছে হাতে-কলমে সাপোর্ট 🤝</h3>
     <div class="lead">আটকে গেলেও একা থাকবে না</div>
     <ul>
-      <li><b>প্রতিদিন লাইভ সাপোর্ট</b> — প্রতিদিন লাইভে তোমাদের প্রশ্নের উত্তর ও সমস্যার সমাধান</li>
-      <li><b>Views সমস্যায় পার্সোনাল কল</b> — কারো Views-এর সমস্যা হলে পার্সোনাল কলে নিয়ে ঠিক করে দেয়া হয়</li>
-      <li><b>Page Setup করে দেয়া হয়</b> — কেউ Page setup করতে না পারলে আমাদের পক্ষ থেকে setup করে দেয়া হয়</li>
+      <li style="--i:0"><b>প্রতিদিন লাইভ সাপোর্ট</b> — প্রতিদিন লাইভে তোমাদের প্রশ্নের উত্তর ও সমস্যার সমাধান</li>
+      <li style="--i:1"><b>Views সমস্যায় পার্সোনাল কল</b> — কারো Views-এর সমস্যা হলে পার্সোনাল কলে নিয়ে ঠিক করে দেয়া হয়</li>
+      <li style="--i:2"><b>Page Setup করে দেয়া হয়</b> — কেউ Page setup করতে না পারলে আমাদের পক্ষ থেকে setup করে দেয়া হয়</li>
     </ul>
   </section>
 
   <section class="how reveal">
     <h3>কিনবেন যেভাবে</h3>
-    <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <?= htmlspecialchars($SITE['bkash']) ?> / Nagad <?= htmlspecialchars($SITE['nagad']) ?> নম্বরে ১০০ টাকা Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার কনফার্ম করুন &nbsp;→&nbsp; ৪. Telegram গ্রুপের লিংক পেয়ে জয়েন করুন</p>
+    <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <?= htmlspecialchars($SITE['bkash']) ?> / Nagad <?= htmlspecialchars($SITE['nagad']) ?> নম্বরে ২০০ টাকা Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার কনফার্ম করুন &nbsp;→&nbsp; ৪. Telegram গ্রুপের লিংক পেয়ে জয়েন করুন</p>
   </section>
 
   <section class="mission reveal">
     <h2>বেকারত্ব দূর করাই<br>মূল লক্ষ্য</h2>
-    <p>শেখা হোক সবার জন্য সহজ — মাত্র ১০০ টাকায় শুরু হোক তোমার অনলাইন ইনকামের যাত্রা।</p>
+    <p>শেখা হোক সবার জন্য সহজ — আজই শুরু হোক তোমার অনলাইন ইনকামের যাত্রা।</p>
   </section>
 
   <footer>
@@ -137,7 +167,7 @@
   <div class="modal">
     <button class="close" type="button" onclick="document.getElementById('buyModal').close()">✕</button>
     <h3 id="courseName">কোর্স কিনুন</h3>
-    <p>নিচের নম্বরে <b>১০০ টাকা</b> Send Money করে ফর্মটা পূরণ করুন।</p>
+    <p>নিচের নম্বরে <b id="modalPrice">২০০ টাকা</b> Send Money করে ফর্মটা পূরণ করুন।</p>
     <form method="post" action="order.php">
       <input type="hidden" name="course" id="courseId" value="">
       <label>পেমেন্ট মাধ্যম</label>
@@ -160,9 +190,10 @@
 
 <script>
 const PAYNUM = { bkash: <?= json_encode($SITE['bkash']) ?>, nagad: <?= json_encode($SITE['nagad']) ?> };
-function openBuy(id, name){
+function openBuy(id, name, price){
   document.getElementById('courseId').value = id;
-  document.getElementById('courseName').textContent = name + ' — ১০০ টাকা';
+  document.getElementById('courseName').textContent = name + ' — ' + price + ' টাকা';
+  document.getElementById('modalPrice').textContent = price + ' টাকা';
   document.getElementById('buyModal').showModal();
 }
 function showNum(){
@@ -170,7 +201,7 @@ function showNum(){
   const box = document.getElementById('paynum');
   if(!m){ box.style.display='none'; return; }
   box.style.display='block';
-  box.innerHTML = '<b>' + (m==='bkash'?'bKash':'Nagad') + ' Personal:</b> <b class="num">' + PAYNUM[m] + '</b><br>এই নম্বরে ১০০ টাকা Send Money করুন, তারপর TrxID বসান।';
+  box.innerHTML = '<b>' + (m==='bkash'?'bKash':'Nagad') + ' Personal:</b> <b class="num">' + PAYNUM[m] + '</b><br>এই নম্বরে কোর্সের মূল্য Send Money করুন, তারপর TrxID বসান।';
 }
 // সেকশন স্ক্রল অ্যানিমেশন
 const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
