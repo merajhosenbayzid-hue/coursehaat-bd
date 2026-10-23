@@ -76,8 +76,6 @@
   dialog::backdrop{background:rgba(5,0,20,.78)}
   .paynum{background:rgba(45,212,191,.1);border:1px dashed rgba(45,212,191,.6);border-radius:12px;padding:12px;margin-top:14px;font-size:15.5px;line-height:1.7;display:none}
   .paynum b.num{font-size:19px;letter-spacing:.5px}
-<dialog id="buyModal">
-</dialog>
   /* বর্ডারহীন প্যানেল — পেছনের Three.js অ্যানিমেশন যেন পরিষ্কার দেখা যায় (ব্যবহারকারীর নির্দেশ) */
   .card,.systems,.how{background:transparent;border:none;backdrop-filter:none;box-shadow:none}
   .chip,.badge,.discount-note{border:none}
