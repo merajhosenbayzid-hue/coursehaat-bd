@@ -233,14 +233,25 @@ function showNum(){
 (function(){
   const h1 = document.querySelector('.hero h1'); if(!h1) return;
   const chars = [];
+  // বাংলা যুক্তাক্ষর/মাত্রা ভাঙা যাবে না — grapheme cluster অনুযায়ী ভাগ করতে হবে
+  function splitG(t){
+    if (window.Intl && Intl.Segmenter) { try { return [...new Intl.Segmenter('bn', {granularity:'grapheme'}).segment(t)].map(x => x.segment); } catch(e){} }
+    const out = [];
+    for (const ch of t) {
+      if (out.length && /[\u0981-\u0983\u09BC\u09BE-\u09C4\u09C7\u09C8\u09CB-\u09CD\u09D7\u09E2\u09E3\u09FE\u200D]/.test(ch)) out[out.length-1] += ch;
+      else if (out.length && out[out.length-1].endsWith('\u09CD')) out[out.length-1] += ch;
+      else out.push(ch);
+    }
+    return out;
+  }
   [...h1.childNodes].forEach(node => {
     if (node.nodeType === 3) {
       const frag = document.createDocumentFragment();
-      [...node.textContent].forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; frag.appendChild(sp); chars.push(sp); });
+      splitG(node.textContent).forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; frag.appendChild(sp); chars.push(sp); });
       node.replaceWith(frag);
     } else if (node.nodeType === 1 && node.tagName !== 'BR') {
       const txt = node.textContent; node.textContent = '';
-      [...txt].forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; node.appendChild(sp); chars.push(sp); });
+      splitG(txt).forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; node.appendChild(sp); chars.push(sp); });
     }
   });
   window.__writeProg = 0; window.__writeDone = false;
