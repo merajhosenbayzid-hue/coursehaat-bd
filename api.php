@@ -67,20 +67,20 @@ function page_head($title) {
     echo '<title>' . esc($title) . ' — CourseHaat BD</title><link rel="icon" href="' . $logo . '">';
     echo '<style>
       *{margin:0;padding:0;box-sizing:border-box}
-      body{font-family:\'Hind Siliguri\',\'Segoe UI\',system-ui,sans-serif;background:radial-gradient(1200px 700px at 50% -10%,#2a0a5e,#12042e 60%);color:#fff;min-height:100vh}
+      body{font-family:\'Hind Siliguri\',\'Segoe UI\',system-ui,sans-serif;background:radial-gradient(1200px 700px at 50% -10%,#0E2A38,#08131F 60%);color:#fff;min-height:100vh}
       .wrap{max-width:860px;margin:0 auto;padding:0 18px 50px}
       header{display:flex;align-items:center;gap:12px;padding:16px 0}
       header img{width:44px;height:44px;border-radius:11px}
-      header .brand{font-size:21px;font-weight:800} header .brand span{color:#ff4fd8}
+      header .brand{font-size:21px;font-weight:800} header .brand span{color:#2DD4BF}
       header nav{margin-left:auto;display:flex;gap:14px;font-size:15px}
-      header nav a{color:#d9cdf7;text-decoration:none;font-weight:600}
-      .card{background:linear-gradient(160deg,rgba(34,16,77,.94),rgba(24,6,54,.94));border:1px solid rgba(255,79,216,.25);border-radius:18px;padding:24px;margin:16px 0}
+      header nav a{color:#CBD5E1;text-decoration:none;font-weight:600}
+      .card{background:linear-gradient(160deg,rgba(13,36,54,.94),rgba(8,22,36,.94));border:1px solid rgba(45,212,191,.25);border-radius:18px;padding:24px;margin:16px 0}
       h1{font-size:26px;margin:10px 0 4px} h2{font-size:20px;margin:4px 0 10px}
-      p{color:#d9cdf7;line-height:1.7} .muted{color:#b7a8de;font-size:14px}
+      p{color:#CBD5E1;line-height:1.7} .muted{color:#94A3B8;font-size:14px}
       label{display:block;font-size:14px;font-weight:700;margin:14px 0 6px}
-      input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#12042e;color:#fff;font-size:16px;font-family:inherit}
-      .btn{display:inline-block;width:100%;text-align:center;background:linear-gradient(90deg,#c026d3,#e11dc0);color:#fff;border:none;border-radius:12px;padding:14px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:16px;text-decoration:none}
-      .btn.secondary{background:#2a1152;border:1px solid rgba(255,255,255,.3)}
+      input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#08131F;color:#fff;font-size:16px;font-family:inherit}
+      .btn{display:inline-block;width:100%;text-align:center;background:linear-gradient(90deg,#0D9488,#0369A1);color:#fff;border:none;border-radius:12px;padding:14px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:16px;text-decoration:none}
+      .btn.secondary{background:#0E2A38;border:1px solid rgba(255,255,255,.3)}
       .btn.small{width:auto;padding:9px 18px;font-size:15px;margin-top:8px}
       .btn.danger{background:#7f1d3a}
       .msg{border-radius:12px;padding:13px 16px;margin:14px 0;line-height:1.6}
@@ -94,13 +94,20 @@ function page_head($title) {
       .pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:13px;font-weight:700}
       .pill.pending{background:rgba(234,179,8,.2);color:#fde047}.pill.approved{background:rgba(34,197,94,.2);color:#86efac}.pill.rejected{background:rgba(239,68,68,.2);color:#fca5a5}.pill.banned{background:rgba(239,68,68,.25);color:#fca5a5}.pill.active{background:rgba(34,197,94,.2);color:#86efac}
       .reflink{display:flex;gap:8px}.reflink input{flex:1}
-      .avatar{width:74px;height:74px;border-radius:50%;object-fit:cover;background:#2a1152}
-      .avatar-fallback{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#c026d3,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
-      a{color:#ff9de6}
+      .avatar{width:74px;height:74px;border-radius:50%;object-fit:cover;background:#0E2A38}
+      .avatar-fallback{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#0D9488,#0369A1);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
+      a{color:#7DD3FC}
+      .tx{opacity:0}
+      .tx.in{animation:boltIn .5s cubic-bezier(.2,.9,.25,1.2) both;animation-delay:var(--d,0ms)}
+      @keyframes boltIn{0%{opacity:0;transform:translateY(24px) scale(.95);filter:brightness(3.2) blur(3px)}45%{opacity:1;transform:translateY(-3px) scale(1.015);filter:brightness(1.9) blur(0)}100%{opacity:1;transform:none;filter:brightness(1)}}
+      @media (prefers-reduced-motion: reduce){.tx{opacity:1}.tx.in{animation:none}}
     </style></head><body><div class="wrap"><header><img src="' . $logo . '" alt="CourseHaat BD"><div class="brand">Course<span>Haat</span> BD</div><nav><a href="index.php">হোম</a>';
     $u = current_user();
     if ($u) { echo '<a href="dashboard.php">ড্যাশবোর্ড</a><a href="logout.php">লগআউট</a>'; }
     else { echo '<a href="account.php">লগইন / সাইন আপ</a>'; }
     echo '</nav></header>';
 }
-function page_foot() { echo '<p class="muted" style="text-align:center;margin-top:26px">CourseHaat BD — বেকারত্ব দূর করাই মূল লক্ষ্য</p></div></body></html>'; }
+function page_foot() { echo '<p class="muted" style="text-align:center;margin-top:26px">CourseHaat BD — বেকারত্ব দূর করাই মূল লক্ষ্য</p></div><script>
+const txIO2 = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); txIO2.unobserve(e.target); } }), {threshold:.25});
+[...document.querySelectorAll('h1,.card,.msg')].forEach((e,i) => { e.classList.add('tx'); e.style.setProperty('--d', (i%5)*80 + 'ms'); txIO2.observe(e); });
+</script></body></html>'; }
