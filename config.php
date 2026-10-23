@@ -8,6 +8,7 @@ $SITE = [
     'nagad'    => '01910190761',
     // Telegram প্রাইভেট গ্রুপের লিংক — পাবলিক repo-তে রাখা হয় না।
     // Render-এ TELEGRAM_LINK env var থেকে আসে; লোকালে config.local.php (git-এর বাইরে) থেকে।
+    // শুধু লগইন করা ও কোর্স কেনা (enrolled) ব্যবহারকারীকে buy.php/dashboard.php-তে দেখানো হয়।
     'telegram' => getenv('TELEGRAM_LINK') ?: '',
 ];
 if ($SITE['telegram'] === '' && is_file(__DIR__ . '/config.local.php')) {
