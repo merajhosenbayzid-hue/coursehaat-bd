@@ -71,13 +71,14 @@
   </header>
 
   <section class="hero">
-    <div class="badge">অনলাইন ইনকাম কোর্স · স্টেপ বাই স্টেপ · প্রাইভেট Telegram গ্রুপ</div>
+    <div class="badge">অনলাইন ইনকাম কোর্স · স্টেপ বাই স্টেপ · প্রাইভেট গ্রুপ</div>
     <h1>চেহারা না দেখিয়ে<br><span class="hl">Facebook</span> ও <span class="hl">YouTube</span><br>মনিটাইজেশন শিখুন</h1>
     <p class="sub">পেজ/চ্যানেল সেটআপ থেকে মনিটাইজেশন পর্যন্ত — সবকিছু ধাপে ধাপে। মাত্র ১০০ টাকায় শিখুন <b>১৫টি সিস্টেম</b>, কেনার সাথে সাথে প্রাইভেট Telegram গ্রুপে অ্যাক্সেস।</p>
     <div class="chips">
       <div class="chip">১৫টি সিস্টেম</div>
       <div class="chip">ভিডিও তৈরির টিউটোরিয়াল</div>
       <div class="chip">AI Automation</div>
+      <div class="chip">প্রতিদিন লাইভ সাপোর্ট</div>
       <div class="chip">মাত্র ১০০ টাকা</div>
     </div>
   </section>
@@ -101,6 +102,16 @@
       <?php foreach ($SYSTEMS as $s): ?><li><?= htmlspecialchars($s) ?></li><?php endforeach; ?>
     </ul>
     <button class="buy" onclick="openBuy('facebook-monetization','Facebook Page Monetization')">মাত্র ১০০ টাকায় সবগুলো নিন</button>
+  </section>
+
+  <section class="systems reveal">
+    <h3>শুধু কোর্স না — সাথে থাকছে হাতে-কলমে সাপোর্ট 🤝</h3>
+    <div class="lead">আটকে গেলেও একা থাকবে না</div>
+    <ul>
+      <li><b>প্রতিদিন লাইভ সাপোর্ট</b> — প্রতিদিন লাইভে তোমাদের প্রশ্নের উত্তর ও সমস্যার সমাধান</li>
+      <li><b>Views সমস্যায় পার্সোনাল কল</b> — কারো Views-এর সমস্যা হলে পার্সোনাল কলে নিয়ে ঠিক করে দেয়া হয়</li>
+      <li><b>Page Setup করে দেয়া হয়</b> — কেউ Page setup করতে না পারলে আমাদের পক্ষ থেকে setup করে দেয়া হয়</li>
+    </ul>
   </section>
 
   <section class="how reveal">
