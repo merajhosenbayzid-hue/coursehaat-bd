@@ -101,6 +101,11 @@
   .paynum{background:rgba(45,212,191,.1);border:1px dashed rgba(45,212,191,.6);border-radius:12px;padding:12px;margin-top:14px;font-size:15.5px;line-height:1.7;display:none}
   .paynum b.num{font-size:19px;letter-spacing:.5px}
   .close{float:right;background:none;border:none;color:#A8C0D8;font-size:22px;cursor:pointer}
+  /* কিনবেন যেভাবে + শেষ লাইন — বড় ও হাইলাইট (ব্যবহারকারীর নির্দেশ) */
+  .how h3{font-size:clamp(26px,4vw,34px)}
+  .how p{font-size:clamp(17.5px,2.6vw,20.5px);color:#E2E8F0;font-weight:600;line-height:2.05}
+  .how p b{color:#FBBF24;font-weight:800}
+  .mission p{font-size:clamp(21px,3.4vw,30px);font-weight:800;line-height:1.6;background:linear-gradient(90deg,#2DD4BF,#38BDF8,#FBBF24);-webkit-background-clip:text;background-clip:text;color:transparent}
 </style>
 </head>
 <body>
@@ -169,7 +174,7 @@
 
   <section class="how reveal">
     <h3>কিনবেন যেভাবে</h3>
-    <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <?= htmlspecialchars($SITE['bkash']) ?> / Nagad <?= htmlspecialchars($SITE['nagad']) ?> নম্বরে ২০০ টাকা Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার কনফার্ম করুন &nbsp;→&nbsp; ৪. Telegram গ্রুপের লিংক পেয়ে জয়েন করুন</p>
+    <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <b><?= htmlspecialchars($SITE['bkash']) ?></b> / Nagad <b><?= htmlspecialchars($SITE['nagad']) ?></b> নম্বরে <b>২০০ টাকা</b> Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার কনফার্ম করুন &nbsp;→&nbsp; ৪. Telegram গ্রুপের লিংক পেয়ে জয়েন করুন</p>
   </section>
 
   <section class="mission reveal">
