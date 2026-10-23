@@ -78,6 +78,12 @@
   .paynum b.num{font-size:19px;letter-spacing:.5px}
 <dialog id="buyModal">
 </dialog>
+  /* বর্ডারহীন প্যানেল — পেছনের Three.js অ্যানিমেশন যেন পরিষ্কার দেখা যায় (ব্যবহারকারীর নির্দেশ) */
+  .card,.systems,.how{background:transparent;border:none;backdrop-filter:none;box-shadow:none}
+  .chip,.badge,.discount-note{border:none}
+  .systems li{border-bottom:none}
+  dialog{border:none}
+  .card p,.systems li,.how p,.card h2{text-shadow:0 2px 12px rgba(0,0,0,.55)}
   /* প্রতিটি টেক্সট আলাদাভাবে বজ্রপাতের মতো ঝলকে আসে (স্ক্রলে) */
   .tx{opacity:0}
   .tx.in{animation:boltIn .5s cubic-bezier(.2,.9,.25,1.2) both;animation-delay:var(--d,0ms)}
