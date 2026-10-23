@@ -69,6 +69,12 @@
   .mission h2{background-size:220% auto;animation:shineMove 6s linear infinite}
   .discount-note{background:rgba(45,212,238,.12);border:1px solid rgba(45,212,238,.5);color:#a5f3fc;border-radius:12px;padding:10px 12px;font-size:15px;font-weight:700;text-align:center;margin-top:12px;animation:floaty 5.5s ease-in-out infinite}
   @media (prefers-reduced-motion: reduce){.hero h1,.hero .chip,.discount-note{animation:none}.systems li{opacity:1}}
+  dialog{border:none;border-radius:20px;padding:0;max-width:440px;width:calc(100% - 32px);background:#0C2033;color:#fff;z-index:5}
+  dialog::backdrop{background:rgba(5,0,20,.78)}
+  .paynum{background:rgba(45,212,191,.1);border:1px dashed rgba(45,212,191,.6);border-radius:12px;padding:12px;margin-top:14px;font-size:15.5px;line-height:1.7;display:none}
+  .paynum b.num{font-size:19px;letter-spacing:.5px}
+<dialog id="buyModal">
+</dialog>
   /* প্রতিটি টেক্সট আলাদাভাবে বজ্রপাতের মতো ঝলকে আসে (স্ক্রলে) */
   .tx{opacity:0}
   .tx.in{animation:boltIn .5s cubic-bezier(.2,.9,.25,1.2) both;animation-delay:var(--d,0ms)}
@@ -97,7 +103,7 @@
     <img src="assets/logo.webp" alt="CourseHaat BD লোগো">
     <div class="brand">Course<span>Haat</span> BD</div>
     <div class="tag"><?= htmlspecialchars($SITE['tagline']) ?></div>
-    <nav style="display:flex;gap:14px;font-size:15px;font-weight:600"><a style="color:#CBD5E1;text-decoration:none" href="index.php">হোম</a><?php if (auth_token()): ?><a style="color:#CBD5E1;text-decoration:none" href="dashboard.php">ড্যাশবোর্ড</a><?php else: ?><a style="color:#CBD5E1;text-decoration:none" href="account.php">লগইন / সাইন আপ</a><?php endif; ?></nav>
+    <nav style="display:flex;gap:14px;font-size:15px;font-weight:600"><a style="color:#CBD5E1;text-decoration:none" href="index.php">হোম</a></nav>
   </header>
 
   <section class="hero">
@@ -121,7 +127,7 @@
       <p><?= htmlspecialchars($c['desc']) ?></p>
       <div class="price"><?= $c['price'] ?> টাকা<small>একবার পেমেন্ট, Telegram-এ সাথে সাথে অ্যাক্সেস</small></div>
       <div class="discount-note">বন্ধুকে জয়েন করান: প্রথম সফল রেফারে ১০০ টাকা বোনাস, পরের প্রতিটিতে ৫০ টাকা করে</div>
-      <a class="buy" href="buy.php?course=<?= $c['id'] ?>">এখনই কিনুন <?= $c['price'] ?> টাকায়</a>
+      <button class="buy" onclick="openBuy('<?= $c['id'] ?>','<?= htmlspecialchars($c['name'], ENT_QUOTES) ?>',<?= $c['price'] ?>)">এখনই কিনুন <?= $c['price'] ?> টাকায়</button>
     </div>
     <?php endforeach; ?>
   </section>
@@ -132,7 +138,7 @@
     <ul>
       <?php foreach ($FB_SYSTEMS as $i => $s): ?><li style="--i:<?= $i ?>"><?= htmlspecialchars($s) ?></li><?php endforeach; ?>
     </ul>
-    <a class="buy" href="buy.php?course=facebook-monetization">কোর্সটি কিনুন — ২০০ টাকা</a>
+    <button class="buy" onclick="openBuy('facebook-monetization','Facebook Page Monetization',200)">কোর্সটি কিনুন — ২০০ টাকা</button>
   </section>
 
   <section class="systems reveal">
@@ -141,7 +147,7 @@
     <ul>
       <?php foreach ($YT_SYSTEMS as $i => $s): ?><li style="--i:<?= $i ?>"><?= htmlspecialchars($s) ?></li><?php endforeach; ?>
     </ul>
-    <a class="buy" href="buy.php?course=youtube-monetization">কোর্সটি কিনুন — ২০০ টাকা</a>
+    <button class="buy" onclick="openBuy('youtube-monetization','YouTube Monetization',200)">কোর্সটি কিনুন — ২০০ টাকা</button>
   </section>
 
   <section class="systems reveal">
@@ -156,7 +162,7 @@
 
   <section class="how reveal">
     <h3>কিনবেন যেভাবে</h3>
-    <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <?= htmlspecialchars($SITE['bkash']) ?> / Nagad <?= htmlspecialchars($SITE['nagad']) ?> নম্বরে ২০০ টাকা Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার জমা দিন &nbsp;→&nbsp; ৪. যাচাই শেষে Approve হলেই ড্যাশবোর্ডে Telegram জয়েন বাটন পাবেন</p>
+    <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <?= htmlspecialchars($SITE['bkash']) ?> / Nagad <?= htmlspecialchars($SITE['nagad']) ?> নম্বরে ২০০ টাকা Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার কনফার্ম করুন &nbsp;→&nbsp; ৪. Telegram গ্রুপের লিংক পেয়ে জয়েন করুন</p>
   </section>
 
   <section class="mission reveal">
@@ -176,6 +182,49 @@ const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting)
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 const txIO = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); txIO.unobserve(e.target); } }), {threshold:.3});
 [...document.querySelectorAll('.wrap h2,.wrap h3,.wrap p,.discount-note,.price,footer')].filter(e => !e.closest('.systems') && !e.closest('.hero')).forEach((e,i) => { e.classList.add('tx'); e.style.setProperty('--d', (i%6)*70 + 'ms'); txIO.observe(e); });
+</script>
+<dialog id="buyModal">
+  <div class="modal">
+    <button class="close" type="button" onclick="document.getElementById('buyModal').close()">✕</button>
+    <h3 id="courseName">কোর্স কিনুন</h3>
+    <p>নিচের নম্বরে <b id="modalPrice">২০০ টাকা</b> Send Money করে ফর্মটা পূরণ করুন।</p>
+    <form method="post" action="order.php">
+      <input type="hidden" name="course" id="courseId" value="">
+      <label>পেমেন্ট মাধ্যম</label>
+      <select name="method" id="method" required onchange="showNum()">
+        <option value="">— বেছে নিন —</option>
+        <option value="bkash">bKash</option>
+        <option value="nagad">Nagad</option>
+      </select>
+      <div class="paynum" id="paynum"></div>
+      <label>আপনার নাম</label>
+      <input name="name" required minlength="3" placeholder="আপনার নাম লিখুন">
+      <label>মোবাইল নম্বর (যে নম্বর থেকে টাকা পাঠিয়েছেন)</label>
+      <input name="phone" required pattern="01[0-9]{9}" inputmode="numeric" placeholder="01XXXXXXXXX">
+      <label>TrxID</label>
+      <input name="trx" required minlength="6" placeholder="যেমন: 9HX7XXXXXX">
+      <button class="buy" type="submit">অর্ডার কনফার্ম করুন</button>
+    </form>
+  </div>
+</dialog>
+<script>
+const PAYNUM = { bkash: <?= json_encode($SITE['bkash']) ?>, nagad: <?= json_encode($SITE['nagad']) ?> };
+function openBuy(id, name, price){
+  document.getElementById('courseId').value = id;
+  document.getElementById('courseName').textContent = name + ' — ' + price + ' টাকা';
+  document.getElementById('modalPrice').textContent = price + ' টাকা';
+  document.getElementById('buyModal').showModal();
+}
+function showNum(){
+  const m = document.getElementById('method').value;
+  const box = document.getElementById('paynum');
+  if(!m){ box.style.display='none'; return; }
+  box.style.display='block';
+  box.innerHTML = '<b>' + (m==='bkash'?'bKash':'Nagad') + ' Personal:</b> <b class="num">' + PAYNUM[m] + '</b><br>এই নম্বরে কোর্সের মূল্য Send Money করুন, তারপর TrxID বসান।';
+}
+// সেকশন স্ক্রল অ্যানিমেশন
+const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
