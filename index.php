@@ -48,6 +48,9 @@
   .how{background:rgba(18,4,46,.66);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:24px;margin:26px 0;text-align:center;backdrop-filter:blur(6px)}
   .how h3{font-size:21px;margin-bottom:12px}
   .how p{color:#d9cdf7;line-height:1.9}
+  .mission{text-align:center;padding:54px 10px 8px}
+  .mission h2{font-size:clamp(40px,8.5vw,80px);font-weight:900;line-height:1.2;background:linear-gradient(90deg,#ff4fd8,#a855f7,#2dd4ee);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+  .mission p{color:#d9cdf7;font-size:clamp(15px,2.4vw,19px);margin-top:12px}
   footer{text-align:center;color:#b7a8de;font-size:14px;padding:26px 0 40px;line-height:1.8}
   dialog{border:none;border-radius:20px;padding:0;max-width:440px;width:calc(100% - 32px);background:#1d083f;color:#fff;z-index:5}
   dialog::backdrop{background:rgba(5,0,20,.78)}
@@ -117,6 +120,11 @@
   <section class="how reveal">
     <h3>কিনবেন যেভাবে</h3>
     <p>১. পছন্দের কোর্সে “এখনই কিনুন” চাপুন &nbsp;→&nbsp; ২. bKash <?= htmlspecialchars($SITE['bkash']) ?> / Nagad <?= htmlspecialchars($SITE['nagad']) ?> নম্বরে ১০০ টাকা Send Money করুন &nbsp;→&nbsp; ৩. TrxID দিয়ে অর্ডার কনফার্ম করুন &nbsp;→&nbsp; ৪. Telegram গ্রুপের লিংক পেয়ে জয়েন করুন</p>
+  </section>
+
+  <section class="mission reveal">
+    <h2>বেকারত্ব দূর করাই<br>মূল লক্ষ্য</h2>
+    <p>শেখা হোক সবার জন্য সহজ — মাত্র ১০০ টাকায় শুরু হোক তোমার অনলাইন ইনকামের যাত্রা।</p>
   </section>
 
   <footer>
