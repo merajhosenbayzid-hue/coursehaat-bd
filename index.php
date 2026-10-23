@@ -229,10 +229,6 @@ function showNum(){
   box.style.display='block';
   box.innerHTML = '<b>' + (m==='bkash'?'bKash':'Nagad') + ' Personal:</b> <b class="num">' + PAYNUM[m] + '</b><br>এই নম্বরে কোর্সের মূল্য Send Money করুন, তারপর TrxID বসান।';
 }
-// সেকশন স্ক্রল অ্যানিমেশন
-const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
 // হেডলাইন টাইপিং: একটা একটা অক্ষর, মোট ~৪.৫ সেকেন্ডে — 3D কলম একই অগ্রগতিতে লেখে
 (function(){
   const h1 = document.querySelector('.hero h1'); if(!h1) return;
