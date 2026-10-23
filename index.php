@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($SITE['name']) ?> — ডিজিটাল কোর্সের হাট</title>
-<meta name="description" content="Facebook Page Monetization ও YouTube Monetization — প্রতিটি কোর্স মাত্র ২০০ টাকায়, রেফারে প্রথম কোর্সে ১০০ টাকা ছাড়। bKash/Nagad পেমেন্ট, সাথে সাথে Telegram অ্যাক্সেস।">
+<meta name="description" content="Facebook Page Monetization ও YouTube Monetization — প্রতিটি কোর্স মাত্র ২০০ টাকায়। রেফার বোনাস: প্রথম সফল রেফারে ১০০ টাকা, পরের প্রতিটিতে ৫০ টাকা। bKash/Nagad পেমেন্ট।">
 <link rel="icon" href="assets/logo.webp">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -113,7 +113,7 @@
       <h2><?= htmlspecialchars($c['name']) ?></h2>
       <p><?= htmlspecialchars($c['desc']) ?></p>
       <div class="price"><?= $c['price'] ?> টাকা<small>একবার পেমেন্ট, Telegram-এ সাথে সাথে অ্যাক্সেস</small></div>
-      <div class="discount-note">রেফার লিংক দিয়ে অ্যাকাউন্ট খুললেই প্রথম কোর্সে ১০০ টাকা ছাড়</div>
+      <div class="discount-note">বন্ধুকে জয়েন করান: প্রথম সফল রেফারে ১০০ টাকা বোনাস, পরের প্রতিটিতে ৫০ টাকা করে</div>
       <button class="buy" onclick="openBuy('<?= $c['id'] ?>','<?= htmlspecialchars($c['name'], ENT_QUOTES) ?>',<?= $c['price'] ?>)">এখনই কিনুন <?= $c['price'] ?> টাকায়</button>
     </div>
     <?php endforeach; ?>
