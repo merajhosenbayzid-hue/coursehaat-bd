@@ -108,6 +108,6 @@ function page_head($title) {
     echo '</nav></header>';
 }
 function page_foot() { echo '<p class="muted" style="text-align:center;margin-top:26px">CourseHaat BD — বেকারত্ব দূর করাই মূল লক্ষ্য</p></div><script>
-const txIO2 = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); txIO2.unobserve(e.target); } }), {threshold:.25});
-[...document.querySelectorAll('h1,.card,.msg')].forEach((e,i) => { e.classList.add('tx'); e.style.setProperty('--d', (i%5)*80 + 'ms'); txIO2.observe(e); });
+const txIO2 = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); txIO2.unobserve(e.target); } }), {threshold:.25});
+[...document.querySelectorAll("h1,.card,.msg")].forEach((e,i) => { e.classList.add("tx"); e.style.setProperty("--d", (i%5)*80 + "ms"); txIO2.observe(e); });
 </script></body></html>'; }
