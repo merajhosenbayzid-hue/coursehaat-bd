@@ -20,8 +20,11 @@
   header .tag{margin-left:auto;font-size:14px;color:#A8C0D8}
   .hero{text-align:center;padding:40px 0 8px}
   .badge{display:inline-block;color:#2DD4BF;font-weight:700;font-size:14px;border:1px solid rgba(45,212,191,.35);padding:7px 16px;border-radius:999px;background:rgba(45,212,191,.07)}
-  .hero h1{font-size:clamp(32px,6.2vw,58px);line-height:1.25;font-weight:900;margin:22px 0 14px;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+  .hero h1{font-size:clamp(38px,7.2vw,66px);line-height:1.25;font-weight:900;margin:22px 0 14px;text-shadow:0 4px 30px rgba(0,0,0,.45)}
   .hero h1 .hl{color:#2DD4BF;background:rgba(45,212,191,.13);padding:0 10px;border-radius:8px;white-space:nowrap}
+  .hero h1 .ch{display:inline-block;opacity:0;white-space:pre}
+  .hero h1 .ch.on{animation:chIn .28s ease-out both}
+  @keyframes chIn{0%{opacity:0;transform:translateY(10px) scale(.75);filter:brightness(3) blur(2px)}100%{opacity:1;transform:none;filter:brightness(1)}}
   .hero p.sub{color:#E2E8F0;font-size:clamp(16px,2.6vw,20px);line-height:1.7;max-width:760px;margin:0 auto}
   .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px 0 6px}
   .chip{border:1.5px solid rgba(255,255,255,.45);border-radius:999px;padding:9px 20px;font-weight:700;font-size:15px;background:rgba(8,20,32,.45);backdrop-filter:blur(4px)}
@@ -57,7 +60,7 @@
   @keyframes liIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
   .hero .badge{animation:rise .7s .05s both;position:relative;overflow:hidden}
   .hero .badge::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);animation:sweep 3.2s ease-in-out infinite}
-  .hero h1{animation:rise .8s .15s both,floaty 7s 1s ease-in-out infinite}
+  .hero h1{animation:rise .8s .15s both}
   .hero .sub{animation:rise .8s .3s both}
   .hero .chips{animation:rise .8s .45s both}
   .hero .chip{animation:floaty 5s ease-in-out infinite}
@@ -225,6 +228,31 @@ function showNum(){
 // সেকশন স্ক্রল অ্যানিমেশন
 const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// হেডলাইন টাইপিং: একটা একটা অক্ষর, মোট ~৪.৫ সেকেন্ডে — 3D কলম একই অগ্রগতিতে লেখে
+(function(){
+  const h1 = document.querySelector('.hero h1'); if(!h1) return;
+  const chars = [];
+  [...h1.childNodes].forEach(node => {
+    if (node.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      [...node.textContent].forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; frag.appendChild(sp); chars.push(sp); });
+      node.replaceWith(frag);
+    } else if (node.nodeType === 1 && node.tagName !== 'BR') {
+      const txt = node.textContent; node.textContent = '';
+      [...txt].forEach(c => { const sp = document.createElement('span'); sp.className = 'ch'; sp.textContent = c; node.appendChild(sp); chars.push(sp); });
+    }
+  });
+  window.__writeProg = 0; window.__writeDone = false;
+  const totalMs = 4500;
+  let i = 0;
+  setTimeout(function tick(){
+    const burst = Math.max(1, Math.round(chars.length / (totalMs / 50)));
+    for (let k = 0; k < burst && i < chars.length; k++, i++) chars[i].classList.add('on');
+    window.__writeProg = chars.length ? i / chars.length : 1;
+    if (i < chars.length) setTimeout(tick, 50); else { window.__writeDone = true; }
+  }, 600);
+})();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -289,23 +317,25 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
     world.add(ring); shapes.push(ring);
   }
 
-  // লাইভ 3D কলম — হিরোর পাশে সোনালি রেখা এঁকে লেখে, দর্শক ধরে রাখতে
+  // লাইভ 3D কলম — হেডলাইন জুড়ে সোনালি রেখা টেনে "লেখে"; লেখা শেষে ধারে সরে সাজানো লুপ চালায়
   const penGroup = new THREE.Group();
   const penCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-1.7,0.5,-2), new THREE.Vector3(-0.9,1.5,-2), new THREE.Vector3(-0.1,0.3,-2),
-    new THREE.Vector3(0.7,1.6,-2), new THREE.Vector3(1.5,0.5,-2), new THREE.Vector3(2.2,1.3,-2)
+    new THREE.Vector3(-6,0,-1), new THREE.Vector3(-4,.7,-1), new THREE.Vector3(-2,-.25,-1),
+    new THREE.Vector3(0,.6,-1), new THREE.Vector3(2,-.25,-1), new THREE.Vector3(4,.7,-1), new THREE.Vector3(6,0,-1)
   ]);
-  const penPts = penCurve.getPoints(140);
+  const penPts = penCurve.getPoints(220);
   const penGeo = new THREE.BufferGeometry().setFromPoints(penPts);
   const penLine = new THREE.Line(penGeo, new THREE.LineBasicMaterial({color:0xFBBF24, transparent:true, opacity:.95}));
   penGroup.add(penLine);
   const pen = new THREE.Group();
-  const penBody = new THREE.Mesh(new THREE.CylinderGeometry(.09,.13,1.5,12), new THREE.MeshStandardMaterial({color:0xF8FAFC, metalness:.4, roughness:.3}));
-  penBody.position.y = .85; pen.add(penBody);
-  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.13,.42,12), new THREE.MeshStandardMaterial({color:0xF59E0B, metalness:.6, roughness:.25}));
-  penTip.rotation.x = Math.PI; penTip.position.y = .1; pen.add(penTip);
+  const penBody = new THREE.Mesh(new THREE.CylinderGeometry(.11,.16,1.8,12), new THREE.MeshStandardMaterial({color:0xF8FAFC, metalness:.4, roughness:.3}));
+  penBody.position.y = 1.02; pen.add(penBody);
+  const penTip = new THREE.Mesh(new THREE.ConeGeometry(.16,.5,12), new THREE.MeshStandardMaterial({color:0xF59E0B, metalness:.6, roughness:.25}));
+  penTip.rotation.x = Math.PI; penTip.position.y = .12; pen.add(penTip);
   pen.rotation.z = -.5; penGroup.add(pen);
-  penGroup.position.set(isMobile ? .6 : 6.6, 4.4, 0);
+  const penWritePos = new THREE.Vector3(0, 5.9, 0), penSidePos = new THREE.Vector3(7.4, 3.6, 0);
+  penGroup.position.copy(penWritePos);
+  if (isMobile) penGroup.scale.set(.55,.8,1);
   world.add(penGroup);
 
   let mx=0, my=0, tx=0, ty=0;
@@ -340,11 +370,20 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
       s.position.y = s.userData.y + Math.sin(t + (s.userData.bob||0)) * .35;
     });
     points.rotation.y = t * .012;
-    const cyc = t % 9, prog = cyc < 6 ? cyc / 6 : 1;
-    penGeo.setDrawRange(0, Math.max(2, Math.floor(penPts.length * prog)));
-    const pp = penCurve.getPoint(Math.min(prog, 1));
-    pen.position.set(pp.x, pp.y, pp.z);
-    penLine.material.opacity = cyc > 8 ? Math.max(0, 9 - cyc) : .95;
+    if (!window.__writeDone) {
+      const prog = window.__writeProg || 0;
+      penGeo.setDrawRange(0, Math.max(2, Math.floor(penPts.length * prog)));
+      const wp = penCurve.getPoint(Math.min(prog, 1));
+      pen.position.set(wp.x, wp.y + Math.sin(t * 9) * .05, wp.z);
+      penLine.material.opacity = .95;
+    } else {
+      penGroup.position.lerp(penSidePos, .03);
+      const cyc = t % 9, prog2 = cyc < 6 ? cyc / 6 : 1;
+      penGeo.setDrawRange(0, Math.max(2, Math.floor(penPts.length * prog2)));
+      const sp = penCurve.getPoint(Math.min(prog2, 1));
+      pen.position.set(sp.x, sp.y, sp.z);
+      penLine.material.opacity = cyc > 8 ? Math.max(0, 9 - cyc) : .95;
+    }
     renderer.render(scene, camera);
   }
   if (reduced) { renderer.render(scene, camera); } else { animate(); }
