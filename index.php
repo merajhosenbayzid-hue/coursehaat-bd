@@ -1,4 +1,4 @@
-<?php require __DIR__ . '/api.php'; ?>
+<?php require __DIR__ . '/api.php'; require __DIR__ . '/lib.php'; ch_save_ref_from_request(); $CH_USER = ch_current_user(); ?>
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -116,11 +116,11 @@
     <div class="logobox"><img src="assets/logo.webp" alt="CourseHaat BD লোগো">
     <div class="brand">Course<span>Haat</span> BD</div></div>
     <div class="tag"><?= htmlspecialchars($SITE['tagline']) ?></div>
-    <nav style="display:flex;gap:14px;font-size:15px;font-weight:600"><a style="color:#CBD5E1;text-decoration:none" href="index.php">হোম</a></nav>
+    <nav style="display:flex;gap:14px;font-size:15px;font-weight:600;align-items:center"><a style="color:#CBD5E1;text-decoration:none" href="index.php">হোম</a><?php if ($CH_USER): ?><a style="color:#08131F;background:#2DD4BF;text-decoration:none;padding:8px 16px;border-radius:999px" href="dashboard.php">👤 <?= ch_esc($CH_USER['name']) ?></a><?php else: ?><a style="color:#08131F;background:#2DD4BF;text-decoration:none;padding:8px 16px;border-radius:999px" href="account.php">অ্যাকাউন্ট</a><?php endif; ?></nav>
   </header>
 
   <section class="hero">
-    <h1>প্রতিদিন স্ক্রল করছো —<br>এবার সেই সময়টাই <span class="hl">আয়ে বদলাও</span></h1>
+    <h1>প্রতিদিন স্ক্রল করছো<br>এবার সেই সময়টাই <span class="hl">আয়ে বদলাও</span></h1>
     <p class="sub">পেজ ও চ্যানেল সেটআপ থেকে মনিটাইজেশন পর্যন্ত — প্রতিটি কোর্সে পূর্ণাঙ্গ, ধাপে ধাপে সাজানো পাঠ্যক্রম। কেনার সাথে সাথে প্রাইভেট Telegram গ্রুপে অ্যাক্সেস।</p>
     <div class="chips">
       <div class="chip">পূর্ণাঙ্গ পাঠ্যক্রম</div>
@@ -129,6 +129,12 @@
       <div class="chip">প্রতিদিন লাইভ সাপোর্ট</div>
       <div class="chip">মাত্র ২০০ টাকায় কোর্স</div>
     </div>
+  </section>
+
+  <section class="refer-band" style="text-align:center;border:2px solid rgba(45,212,191,.5);background:rgba(45,212,191,.08);border-radius:20px;padding:26px 22px;margin:26px 0">
+    <h2 style="font-size:clamp(21px,3.4vw,28px);margin-bottom:10px">👥 বন্ধুকে জয়েন করাও, বোনাস পাও</h2>
+    <p style="color:#E2E8F0;line-height:1.8">তোমার রেফার লিংক দিয়ে কেউ অ্যাকাউন্ট খুলে কোর্স কিনলেই — প্রথম সফল রেফারে <b style="color:#FBBF24">১০০ টাকা</b>, পরের প্রতিটিতে <b style="color:#FBBF24">৫০ টাকা</b> করে তোমার ৳ বক্সে জমা হবে।</p>
+    <a class="buy" style="display:inline-block;margin-top:14px;text-decoration:none" href="account.php">অ্যাকাউন্ট খুলে রেফার লিংক নিন →</a>
   </section>
 
   <section class="grid">
@@ -210,9 +216,9 @@ const txIO = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersectin
       </select>
       <div class="paynum" id="paynum"></div>
       <label>আপনার নাম</label>
-      <input name="name" required minlength="3" placeholder="আপনার নাম লিখুন">
+      <input name="name" required minlength="3" placeholder="আপনার নাম লিখুন" value="<?= $CH_USER ? ch_esc($CH_USER['name']) : '' ?>">
       <label>মোবাইল নম্বর (যে নম্বর থেকে টাকা পাঠিয়েছেন)</label>
-      <input name="phone" required pattern="01[0-9]{9}" inputmode="numeric" placeholder="01XXXXXXXXX">
+      <input name="phone" required pattern="01[0-9]{9}" inputmode="numeric" placeholder="01XXXXXXXXX" value="<?= $CH_USER ? ch_esc($CH_USER['phone']) : '' ?>">
       <label>TrxID</label>
       <input name="trx" required minlength="6" placeholder="যেমন: 9HX7XXXXXX">
       <button class="buy" type="submit">অর্ডার কনফার্ম করুন</button>
