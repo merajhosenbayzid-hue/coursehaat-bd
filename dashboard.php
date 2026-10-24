@@ -1,98 +1,115 @@
 <?php
-require __DIR__ . '/api.php';
-$u = current_user();
+// CourseHaat BD — ড্যাশবোর্ড: ৳ রেফার বোনাস বক্স + রেফার লিংক + আমার অর্ডার
+require __DIR__ . '/lib.php';
+require __DIR__ . '/config.php';
+$u = ch_current_user();
 if (!$u) { header('Location: account.php'); exit; }
 
-$msg = ''; $err = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['do'] ?? '') === 'profile') {
-    $r = backend('updateProfile', ['token' => auth_token(), 'name' => trim($_POST['name'] ?? ''), 'avatar' => trim($_POST['avatar'] ?? '')]);
-    if (!empty($r['ok'])) { $msg = 'প্রোফাইল আপডেট হয়েছে।'; $u = current_user(true); }
-    else $err = $r['error'] ?? 'সমস্যা হয়েছে।';
-}
-$ref = backend('referralInfo', ['token' => auth_token()]);
-$orders = backend('myOrders', ['token' => auth_token()]);
-$refLink = site_url() . '/account.php?ref=' . urlencode($u['refCode']);
+$balance = ch_referral_balance($u['ref_code']);
+$rows = ch_referral_rows($u['ref_code']);
+$link = ch_ref_link($u['ref_code']);
 $courseNames = [];
 foreach ($COURSES as $c) $courseNames[$c['id']] = $c['name'];
-
-page_head('ড্যাশবোর্ড');
+$orders = [];
+foreach (ch_read_csv(ch_data_dir() . '/orders.csv') as $p) {
+    if (isset($p[3]) && $p[3] === $u['phone']) $orders[] = $p;
+}
 ?>
-<h1>আমার ড্যাশবোর্ড</h1>
-<?php if ($msg) echo '<div class="msg ok">' . esc($msg) . '</div>'; ?>
-<?php if ($err) echo '<div class="msg err">' . esc($err) . '</div>'; ?>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ড্যাশবোর্ড — CourseHaat BD</title>
+<style>
+ body{font-family:'Hind Siliguri',system-ui,sans-serif;background:#08131F;color:#fff;min-height:100vh;margin:0;padding:24px 16px}
+ .wrap{max-width:640px;margin:0 auto}
+ a{color:#2DD4BF;font-weight:700;text-decoration:none}
+ .card{background:linear-gradient(160deg,#0D2436,#081624);border:1px solid rgba(45,212,191,.3);border-radius:20px;padding:26px 24px;margin-bottom:18px}
+ h1{font-size:26px;margin:0 0 6px} h2{font-size:20px;margin:0 0 12px}
+ p,li{color:#CBD5E1;line-height:1.8}
+ .money{text-align:center;border:2px solid rgba(251,191,36,.7);background:rgba(251,191,36,.1);border-radius:20px;padding:24px;margin-bottom:18px}
+ .money .lbl{font-size:17px;color:#FEF3C7;font-weight:700}
+ .money .amt{font-size:52px;font-weight:900;color:#FBBF24;line-height:1.2}
+ .money .sub{color:#CBD5E1;font-size:15px}
+ .linkbox{display:flex;gap:8px;margin-top:12px}
+ .linkbox input{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#08131F;color:#fff;font-size:14px;min-width:0}
+ .linkbox button{background:#2DD4BF;color:#08131F;font-weight:800;border:none;border-radius:10px;padding:12px 18px;cursor:pointer}
+ table{width:100%;border-collapse:collapse;font-size:15px}
+ th,td{text-align:left;padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.12)}
+ th{color:#2DD4BF}
+ .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="index.php">← হোমে ফিরুন</a>
+    <a href="logout.php">লগআউট</a>
+  </div>
 
-<div class="card">
-  <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-    <?php if (!empty($u['avatar']) && preg_match('/^https?:\/\//', $u['avatar'])): ?>
-      <img class="avatar" src="<?= esc($u['avatar']) ?>" alt="প্রোফাইল ছবি">
+  <div class="card">
+    <h1>স্বাগতম, <?= ch_esc($u['name']) ?> 👋</h1>
+    <p>মোবাইল: <?= ch_esc($u['phone']) ?> · Gmail: <?= ch_esc($u['email']) ?></p>
+  </div>
+
+  <div class="money">
+    <div class="lbl">💰 রেফার বোনাস ব্যালেন্স</div>
+    <div class="amt">৳<?= number_format($balance, 0, '.', ',') ?></div>
+    <div class="sub">প্রথম সফল রেফারে ৳১০০, পরের প্রতিটিতে ৳৫০ করে জমা হয়</div>
+  </div>
+
+  <div class="card">
+    <h2>🔗 তোমার রেফার লিংক</h2>
+    <p>এই লিংক বন্ধুদের পাঠাও। লিংক দিয়ে কেউ অ্যাকাউন্ট খুলে কোর্স কিনলেই তোমার বক্সে বোনাস জমা হবে।</p>
+    <div class="linkbox">
+      <input id="reflink" readonly value="<?= ch_esc($link) ?>">
+      <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('reflink').value);this.textContent='কপি হয়েছে ✓'">কপি করুন</button>
+    </div>
+    <p style="margin-top:14px">কীভাবে কাজ করে:</p>
+    <ol>
+      <li>বন্ধু তোমার লিংক দিয়ে অ্যাকাউন্ট খুলবে (নাম + নম্বর + Gmail, কোনো ভেরিফিকেশন নেই)</li>
+      <li>বন্ধু যেকোনো কোর্স কিনবে (২০০ টাকা)</li>
+      <li>প্রথম সফল রেফারে তোমার বক্সে <b>৳১০০</b>, পরের প্রতিটি রেফারে <b>৳৫০</b> জমা হবে</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>👥 আমার রেফার (<?= count($rows) ?> জন)</h2>
+    <?php if (!$rows): ?>
+      <p>এখনো কেউ তোমার লিংক দিয়ে কেনেনি। লিংকটা শেয়ার করলেই এখানে দেখা যাবে।</p>
     <?php else: ?>
-      <div class="avatar-fallback"><?= esc(function_exists('mb_substr') ? mb_substr($u['name'], 0, 1) : '👤') ?></div>
+      <table>
+        <tr><th>তারিখ</th><th>বন্ধু</th><th>কোর্স</th><th>বোনাস</th></tr>
+        <?php foreach (array_reverse($rows) as $r): ?>
+          <tr>
+            <td><?= ch_esc(substr($r['date'], 0, 10)) ?></td>
+            <td><?= ch_esc($r['buyer_name']) ?> (<?= ch_esc(ch_mask_phone($r['buyer_phone'])) ?>)</td>
+            <td><?= ch_esc($courseNames[$r['course_id']] ?? $r['course_id']) ?></td>
+            <td><b>৳<?= (int)$r['amount'] ?></b></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
     <?php endif; ?>
-    <div>
-      <h2 style="margin:0"><?= esc($u['name']) ?></h2>
-      <p class="muted"><?= esc($u['email']) ?> · <?= esc($u['phone']) ?><br>
-      স্ট্যাটাস: <span class="pill <?= $u['status'] === 'banned' ? 'banned' : 'active' ?>"><?= $u['status'] === 'banned' ? 'Ban' : 'Active' ?></span></p>
-    </div>
   </div>
-  <form method="post" style="margin-top:10px">
-    <input type="hidden" name="do" value="profile">
-    <div class="row">
-      <div><label>নাম বদলাতে চাইলে</label><input name="name" value="<?= esc($u['name']) ?>"></div>
-      <div><label>প্রোফাইল ছবির লিংক (URL)</label><input name="avatar" value="<?= esc(preg_match('/^https?:\/\//', $u['avatar'] ?? '') ? $u['avatar'] : '') ?>" placeholder="https://..."></div>
-    </div>
-    <button class="btn small" type="submit">প্রোফাইল সেভ করুন</button>
-  </form>
-</div>
 
-<div class="card">
-  <h2>আমার কোর্স</h2>
-  <?php if (!empty($u['enrolled'])): ?>
-    <?php foreach ($u['enrolled'] as $cid): ?>
-      <p style="margin:10px 0">✅ <b><?= esc($courseNames[$cid] ?? $cid) ?></b>
-      <?php if (!empty($SITE['telegram'])): ?>
-        — <a href="<?= esc($SITE['telegram']) ?>" target="_blank" rel="noopener"><b>Telegram গ্রুপে জয়েন করুন</b></a>
-      <?php endif; ?></p>
-    <?php endforeach; ?>
-  <?php else: ?>
-    <p>এখনো কোনো কোর্স কেনা হয়নি। <a href="index.php">কোর্স দেখুন</a></p>
-  <?php endif; ?>
-
-  <h2 style="margin-top:22px">আমার অর্ডার</h2>
-  <?php if (!empty($orders['orders'])): ?>
-  <table>
-    <tr><th>কোর্স</th><th>TrxID</th><th>অবস্থা</th></tr>
-    <?php foreach ($orders['orders'] as $o): ?>
-    <tr>
-      <td><?= esc($courseNames[$o['courseId']] ?? $o['courseId']) ?></td>
-      <td><?= esc($o['trx']) ?></td>
-      <td><span class="pill <?= esc($o['status']) ?>"><?= $o['status'] === 'pending' ? 'যাচাই চলছে' : ($o['status'] === 'approved' ? 'Approve হয়েছে' : 'Reject হয়েছে') ?></span>
-      <?php if ($o['status'] === 'rejected' && !empty($o['reason'])) echo '<br><span class="muted">কারণ: ' . esc($o['reason']) . '</span>'; ?></td>
-    </tr>
-    <?php endforeach; ?>
-  </table>
-  <?php else: ?><p class="muted">কোনো অর্ডার নেই।</p><?php endif; ?>
-</div>
-
-<div class="card">
-  <h2>রেফার করে আয় করুন</h2>
-  <p>আপনার লিংক দিয়ে কেউ অ্যাকাউন্ট খুলে যেকোনো কোর্স কিনলেই — <b>প্রথম সফল রেফারে ১০০ টাকা</b>, পরের প্রতিটিতে <b>৫০ টাকা</b> করে বোনাস আপনার ব্যালেন্সে যাবে।</p>
-  <label>আপনার রেফার লিংক</label>
-  <div class="reflink">
-    <input id="reflink" readonly value="<?= esc($refLink) ?>">
-    <button class="btn small" type="button" onclick="navigator.clipboard.writeText(document.getElementById('reflink').value);this.textContent='কপি হয়েছে ✓'">কপি</button>
+  <div class="card">
+    <h2>🛒 আমার অর্ডার</h2>
+    <?php if (!$orders): ?>
+      <p>এখনো কোনো কোর্স কেনোনি। <a href="index.php">কোর্স দেখুন →</a></p>
+    <?php else: ?>
+      <table>
+        <tr><th>তারিখ</th><th>কোর্স</th><th>TrxID</th></tr>
+        <?php foreach (array_reverse($orders) as $o): ?>
+          <tr>
+            <td><?= ch_esc(substr($o[0], 0, 10)) ?></td>
+            <td><?= ch_esc($courseNames[$o[1]] ?? $o[1]) ?></td>
+            <td><?= ch_esc($o[5] ?? '') ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
   </div>
-  <div class="row" style="margin-top:16px">
-    <div class="stat"><b><?= (int)($ref['totalReferrals'] ?? 0) ?></b>মোট রেফার</div>
-    <div class="stat"><b><?= (int)($ref['successfulReferrals'] ?? 0) ?></b>সফল রেফার</div>
-    <div class="stat"><b><?= (int)($ref['bonusBalance'] ?? 0) ?> টাকা</b>বোনাস ব্যালেন্স</div>
-  </div>
-  <?php if (!empty($ref['referrals'])): ?>
-  <table style="margin-top:14px">
-    <tr><th>নাম</th><th>যোগ দিয়েছে</th><th>কোর্স কিনেছে?</th></tr>
-    <?php foreach ($ref['referrals'] as $r): ?>
-    <tr><td><?= esc($r['name']) ?></td><td><?= esc(substr((string)$r['joined'], 0, 10)) ?></td><td><?= !empty($r['purchased']) ? '✅ হ্যাঁ' : '— এখনো না' ?></td></tr>
-    <?php endforeach; ?>
-  </table>
-  <?php endif; ?>
 </div>
-<?php page_foot(); ?>
+</body>
+</html>
