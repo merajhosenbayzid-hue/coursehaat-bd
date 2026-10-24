@@ -14,10 +14,11 @@
   #bg3d{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
   .wrap{max-width:1080px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
   header{display:flex;align-items:center;gap:12px;padding:16px 0}
+  header .logobox{display:flex;align-items:center;gap:12px;padding:7px 18px 7px 7px;border:2px solid rgba(45,212,191,.7);border-radius:18px;background:rgba(45,212,191,.1);box-shadow:0 0 22px rgba(45,212,191,.25)}
   header img{width:46px;height:46px;border-radius:12px}
   header .brand{font-size:22px;font-weight:800}
   header .brand span{color:#2DD4BF}
-  header .tag{margin-left:auto;font-size:14px;color:#A8C0D8}
+  header .tag{margin-left:auto;font-size:14px;font-weight:700;color:#FEF3C7;border:2px solid rgba(251,191,36,.7);border-radius:999px;background:rgba(251,191,36,.1);padding:9px 18px;box-shadow:0 0 22px rgba(251,191,36,.2)}
   .hero{text-align:center;padding:40px 0 8px}
   .badge{display:inline-block;color:#2DD4BF;font-weight:700;font-size:14px;border:1px solid rgba(45,212,191,.35);padding:7px 16px;border-radius:999px;background:rgba(45,212,191,.07)}
   .hero h1{font-size:clamp(38px,7.2vw,66px);line-height:1.25;font-weight:900;margin:22px 0 14px;text-shadow:0 4px 30px rgba(0,0,0,.45)}
@@ -112,8 +113,8 @@
 <canvas id="bg3d"></canvas>
 <div class="wrap">
   <header>
-    <img src="assets/logo.webp" alt="CourseHaat BD লোগো">
-    <div class="brand">Course<span>Haat</span> BD</div>
+    <div class="logobox"><img src="assets/logo.webp" alt="CourseHaat BD লোগো">
+    <div class="brand">Course<span>Haat</span> BD</div></div>
     <div class="tag"><?= htmlspecialchars($SITE['tagline']) ?></div>
     <nav style="display:flex;gap:14px;font-size:15px;font-weight:600"><a style="color:#CBD5E1;text-decoration:none" href="index.php">হোম</a></nav>
   </header>
