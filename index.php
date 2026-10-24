@@ -25,7 +25,7 @@
   .hero h1 .ch{display:inline-block;opacity:0;white-space:pre}
   .hero h1 .ch.on{animation:chIn .28s ease-out both}
   @keyframes chIn{0%{opacity:0;transform:translateY(10px) scale(.75);filter:brightness(3) blur(2px)}100%{opacity:1;transform:none;filter:brightness(1)}}
-  .hero p.sub{color:#E2E8F0;font-size:clamp(16px,2.6vw,20px);line-height:1.7;max-width:760px;margin:0 auto}
+  .hero p.sub{color:#F1F5F9;font-size:clamp(17px,2.8vw,21px);font-weight:800;line-height:1.7;max-width:760px;margin:0 auto}
   .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px 0 6px}
   .chip{border:1.5px solid rgba(255,255,255,.45);border-radius:999px;padding:9px 20px;font-weight:700;font-size:15px;background:rgba(8,20,32,.45);backdrop-filter:blur(4px)}
   .reveal{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s ease}
@@ -119,7 +119,6 @@
   </header>
 
   <section class="hero">
-    <div class="badge">অনলাইন ইনকাম কোর্স · স্টেপ বাই স্টেপ · প্রাইভেট গ্রুপ</div>
     <h1>চেহারা না দেখিয়ে<br><span class="hl">Facebook</span> ও <span class="hl">YouTube</span><br>মনিটাইজেশন শিখুন</h1>
     <p class="sub">পেজ ও চ্যানেল সেটআপ থেকে মনিটাইজেশন পর্যন্ত — প্রতিটি কোর্সে পূর্ণাঙ্গ, ধাপে ধাপে সাজানো পাঠ্যক্রম। কেনার সাথে সাথে প্রাইভেট Telegram গ্রুপে অ্যাক্সেস।</p>
     <div class="chips">
