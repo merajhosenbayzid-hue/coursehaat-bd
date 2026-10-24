@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/api.php';
-do_logout();
+require __DIR__ . '/lib.php';
+ch_logout();
 header('Location: index.php');
 exit;
