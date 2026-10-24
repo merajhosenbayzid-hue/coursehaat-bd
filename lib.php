@@ -29,14 +29,39 @@ function ch_append_csv($file, $row) {
     return true;
 }
 
-// users.csv কলাম: created, name, phone, email, ref_code, referrer_code
+// users.csv কলাম: created, name, phone, email, ref_code, referrer_code, pass_hash
+// পুরনো ৬-কলাম রো-তেও কাজ করে (pass_hash খালি ধরা হয় — লিগ্যাসি অ্যাকাউন্ট)।
 function ch_all_users() {
     $out = [];
     foreach (ch_read_csv(ch_users_file()) as $p) {
         if (count($p) < 6) continue;
-        $out[] = ['created' => $p[0], 'name' => $p[1], 'phone' => $p[2], 'email' => $p[3], 'ref_code' => $p[4], 'referrer_code' => $p[5]];
+        $out[] = ['created' => $p[0], 'name' => $p[1], 'phone' => $p[2], 'email' => $p[3], 'ref_code' => $p[4], 'referrer_code' => $p[5], 'pass_hash' => ($p[6] ?? '')];
     }
     return $out;
+}
+function ch_write_all_users($users) {
+    $fh = fopen(ch_users_file(), 'w');
+    if (!$fh) return false;
+    if (flock($fh, LOCK_EX)) {
+        foreach ($users as $u) fputcsv($fh, [$u['created'], $u['name'], $u['phone'], $u['email'], $u['ref_code'], $u['referrer_code'], $u['pass_hash']]);
+        flock($fh, LOCK_UN);
+    }
+    fclose($fh);
+    return true;
+}
+function ch_set_password($phone, $plain) {
+    $users = ch_all_users(); $done = false;
+    foreach ($users as &$u) {
+        if ($u['phone'] === $phone) { $u['pass_hash'] = password_hash($plain, PASSWORD_DEFAULT); $done = true; }
+    }
+    unset($u);
+    if ($done) ch_write_all_users($users);
+    return $done;
+}
+// ফল: 'ok' | 'wrong' | 'legacy' (পুরনো অ্যাকাউন্ট — পাসওয়ার্ড সেট করা নেই)
+function ch_check_password($user, $plain) {
+    if (empty($user['pass_hash'])) return 'legacy';
+    return password_verify($plain, $user['pass_hash']) ? 'ok' : 'wrong';
 }
 function ch_find_user_by_phone($phone) { foreach (ch_all_users() as $u) if ($u['phone'] === $phone) return $u; return null; }
 function ch_find_user_by_email($email) { foreach (ch_all_users() as $u) if (strcasecmp($u['email'], $email) === 0) return $u; return null; }
