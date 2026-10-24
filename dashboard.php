@@ -5,6 +5,16 @@ require __DIR__ . '/config.php';
 $u = ch_current_user();
 if (!$u) { header('Location: account.php'); exit; }
 
+// পুরনো অ্যাকাউন্টে পাসওয়ার্ড না থাকলে এখানেই সেট করতে হবে (পুরনো ডেটা অপরিবর্তিত থাকে)
+$setpassMsg = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['do'] ?? '') === 'setpass') {
+    $p1 = $_POST['new_password'] ?? ''; $p2 = $_POST['new_password2'] ?? '';
+    if (mb_strlen($p1) < 6) $setpassMsg = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।';
+    elseif ($p1 !== $p2) $setpassMsg = 'দুইবার একই পাসওয়ার্ড দাও।';
+    elseif (ch_set_password($u['phone'], $p1)) { $u = ch_current_user(); $setpassMsg = 'পাসওয়ার্ড সেট হয়েছে। এখন থেকে এটা দিয়েই লগইন করবে।'; }
+}
+$notice = $_SESSION['ch_notice'] ?? ''; unset($_SESSION['ch_notice']);
+
 $balance = ch_referral_balance($u['ref_code']);
 $rows = ch_referral_rows($u['ref_code']);
 $link = ch_ref_link($u['ref_code']);
@@ -48,6 +58,24 @@ foreach (ch_read_csv(ch_data_dir() . '/orders.csv') as $p) {
     <a href="logout.php">লগআউট</a>
   </div>
 
+  <?php if ($notice): ?><div class="card" style="border-color:rgba(251,191,36,.6)"><p style="color:#FEF3C7"><?= ch_esc($notice) ?></p></div><?php endif; ?>
+
+  <?php if (empty($u['pass_hash'])): ?>
+  <div class="card" style="border-color:rgba(251,191,36,.6)">
+    <h2>🔐 পাসওয়ার্ড সেট করুন</h2>
+    <p>তোমার অ্যাকাউন্টটি আগের নিয়মে খোলা (পাসওয়ার্ড ছিল না)। পুরনো ডেটা সব ঠিক আছে — শুধু এখন একটা পাসওয়ার্ড বসিয়ে নাও, এরপর এটা দিয়েই লগইন করবে।</p>
+    <?php if ($setpassMsg): ?><p><b><?= ch_esc($setpassMsg) ?></b></p><?php endif; ?>
+    <form method="post">
+      <input type="hidden" name="do" value="setpass">
+      <label style="display:block;margin:12px 0 6px;font-weight:700">নতুন পাসওয়ার্ড</label>
+      <input style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#08131F;color:#fff;font-size:16px;box-sizing:border-box" name="new_password" required type="password" minlength="6" placeholder="কমপক্ষে ৬ অক্ষর">
+      <label style="display:block;margin:12px 0 6px;font-weight:700">আবার পাসওয়ার্ড</label>
+      <input style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#08131F;color:#fff;font-size:16px;box-sizing:border-box" name="new_password2" required type="password" minlength="6" placeholder="একই পাসওয়ার্ড আবার">
+      <button style="margin-top:14px;background:#2DD4BF;color:#08131F;font-weight:800;border:none;border-radius:10px;padding:12px 22px;cursor:pointer;font-size:16px" type="submit">পাসওয়ার্ড সেট করুন</button>
+    </form>
+  </div>
+  <?php endif; ?>
+
   <div class="card">
     <h1>স্বাগতম, <?= ch_esc($u['name']) ?> 👋</h1>
     <p>মোবাইল: <?= ch_esc($u['phone']) ?> · Gmail: <?= ch_esc($u['email']) ?></p>
@@ -61,6 +89,7 @@ foreach (ch_read_csv(ch_data_dir() . '/orders.csv') as $p) {
 
   <div class="card">
     <h2>🔗 তোমার রেফার লিংক</h2>
+    <p>তোমার রেফার কোড: <b style="color:#FBBF24"><?= ch_esc($u['ref_code']) ?></b> — বন্ধুকে শুধু এই কোডটা দিলেও হবে। কোডটি মিললেই বোনাস গোনা হবে, না মিললে হবে না।</p>
     <p>এই লিংক বন্ধুদের পাঠাও। লিংক দিয়ে কেউ অ্যাকাউন্ট খুলে কোর্স কিনলেই তোমার বক্সে বোনাস জমা হবে।</p>
     <div class="linkbox">
       <input id="reflink" readonly value="<?= ch_esc($link) ?>">
