@@ -119,7 +119,7 @@
   </header>
 
   <section class="hero">
-    <h1>চেহারা না দেখিয়ে<br><span class="hl">Facebook</span> ও <span class="hl">YouTube</span><br>মনিটাইজেশন শিখুন</h1>
+    <h1>প্রতিদিন স্ক্রল করছো —<br>এবার সেই সময়টাই <span class="hl">আয়ে বদলাও</span></h1>
     <p class="sub">পেজ ও চ্যানেল সেটআপ থেকে মনিটাইজেশন পর্যন্ত — প্রতিটি কোর্সে পূর্ণাঙ্গ, ধাপে ধাপে সাজানো পাঠ্যক্রম। কেনার সাথে সাথে প্রাইভেট Telegram গ্রুপে অ্যাক্সেস।</p>
     <div class="chips">
       <div class="chip">পূর্ণাঙ্গ পাঠ্যক্রম</div>
