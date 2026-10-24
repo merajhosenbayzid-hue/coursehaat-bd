@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/config.php';
+require __DIR__ . '/lib.php';
 
 function fail($msg) {
     http_response_code(422);
@@ -41,6 +42,11 @@ $row = [date('c'), $course['id'], $name, $phone, $method, $trx, $course['price']
 $fh = fopen($logFile, 'a');
 if ($fh) { fputcsv($fh, $row); fclose($fh); }
 
+// রেফার বোনাস: ক্রেতা আগে রেফার লিংক দিয়ে অ্যাকাউন্ট খুলে থাকলে, তার প্রথম কেনায় রেফারারের বক্সে বোনাস জমা হবে
+$refCredited = ch_credit_referral($phone, $name, $course['id']);
+$buyerUser = ch_find_user_by_phone($phone);
+$buyerHasReferrer = $buyerUser && !empty($buyerUser['referrer_code']);
+
 $payNum = $method === 'bkash' ? $SITE['bkash'] : $SITE['nagad'];
 ?>
 <!DOCTYPE html>
@@ -71,6 +77,7 @@ $payNum = $method === 'bkash' ? $SITE['bkash'] : $SITE['nagad'];
   <?php else: ?>
   <p><b>পেমেন্ট যাচাই শেষে তোমার মোবাইলে Telegram জয়েন লিংক পাঠিয়ে দেওয়া হবে।</b></p>
   <?php endif; ?>
+  <?php if ($buyerHasReferrer): ?><p>🤝 তুমি রেফার লিংক দিয়ে এসেছো — তোমার বন্ধুর রেফার বোনাস তার ৳ বক্সে জমা হবে।</p><?php endif; ?>
   <p class="warn" style="margin-top:16px">⚠️ লিংকটা কারো সাথে শেয়ার করো না — শেয়ার করলে অ্যাক্সেস বন্ধ হয়ে যাবে।</p>
 </div>
 </body>
