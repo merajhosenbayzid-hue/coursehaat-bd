@@ -1,165 +1,99 @@
 <?php
-require __DIR__ . '/api.php';
-if (current_user()) { header('Location: dashboard.php'); exit; }
+// CourseHaat BD — অ্যাকাউন্ট খুলুন / লগইন (কোনো OTP/ভেরিফিকেশন নেই)
+require __DIR__ . '/lib.php';
+require __DIR__ . '/config.php';
+ch_save_ref_from_request();
+if (ch_current_user()) { header('Location: dashboard.php'); exit; }
 
 $msg = ''; $err = '';
-$step = 'form'; // form | otp | phone (google complete)
-$pendingEmail = isset($_SESSION['ch_pending_email']) ? $_SESSION['ch_pending_email'] : '';
-$googleIdToken = isset($_SESSION['ch_google_token']) ? $_SESSION['ch_google_token'] : '';
-$googleName = isset($_SESSION['ch_google_name']) ? $_SESSION['ch_google_name'] : '';
-$googleEmail = isset($_SESSION['ch_google_email']) ? $_SESSION['ch_google_email'] : '';
+$ref = ch_saved_ref();
+$refUser = ($ref !== '') ? ch_find_user_by_code($ref) : null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $do = $_POST['do'] ?? '';
-    if ($do === 'request_otp') {
-        $purpose = ($_POST['purpose'] ?? 'signup') === 'login' ? 'login' : 'signup';
-        $r = backend('requestOtp', [
-            'purpose' => $purpose,
-            'name' => trim($_POST['name'] ?? ''),
-            'phone' => trim($_POST['phone'] ?? ''),
-            'email' => trim($_POST['email'] ?? ''),
-            'refCode' => saved_ref(),
-        ]);
-        if (!empty($r['ok'])) {
-            $_SESSION['ch_pending_email'] = trim($_POST['email'] ?? '');
-            $pendingEmail = $_SESSION['ch_pending_email'];
-            $step = 'otp'; $msg = $r['message'] ?? 'কোড পাঠানো হয়েছে।';
-        } else { $err = $r['error'] ?? 'সমস্যা হয়েছে।'; }
-    }
-    if ($do === 'verify_otp') {
-        $r = backend('verifyOtp', ['email' => $pendingEmail, 'code' => trim($_POST['code'] ?? '')]);
-        if (!empty($r['ok'])) {
-            login_with_token($r['token']);
-            unset($_SESSION['ch_pending_email']);
+    $do = $_POST['do'] ?? 'signup';
+    $name = trim($_POST['name'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    if ($do === 'login') {
+        $found = ch_find_user_by_phone($phone);
+        if ($found && strcasecmp($found['email'], $email) === 0) {
+            ch_login_user($found);
             header('Location: dashboard.php'); exit;
-        } else { $err = $r['error'] ?? 'ভুল কোড।'; $step = 'otp'; }
-    }
-    if ($do === 'google') {
-        $idToken = trim($_POST['id_token'] ?? '');
-        $r = backend('googleLogin', ['idToken' => $idToken]);
-        if (!empty($r['ok']) && !empty($r['needPhone'])) {
-            $_SESSION['ch_google_token'] = $idToken;
-            $_SESSION['ch_google_name'] = $r['name'] ?? '';
-            $_SESSION['ch_google_email'] = $r['email'] ?? '';
-            $googleIdToken = $idToken; $googleName = $_SESSION['ch_google_name']; $googleEmail = $_SESSION['ch_google_email'];
-            $step = 'phone'; $msg = 'Google অ্যাকাউন্ট যাচাই হয়েছে। অ্যাকাউন্ট খুলতে মোবাইল নম্বরটা দিন (এক নম্বরে একটাই অ্যাকাউন্ট)।';
-        } elseif (!empty($r['ok'])) {
-            login_with_token($r['token']);
+        }
+        $err = 'এই মোবাইল + Gmail দিয়ে কোনো অ্যাকাউন্ট পাওয়া যায়নি। নিচে নতুন অ্যাকাউন্ট খুলুন।';
+    } else {
+        if (mb_strlen($name) < 3) $err = 'আপনার সঠিক নাম লিখুন।';
+        elseif (!preg_match('/^01\d{9}$/', $phone)) $err = 'সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন।';
+        elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $err = 'সঠিক Gmail ঠিকানা দিন।';
+        else {
+            $existing = ch_find_user_by_phone($phone) ?: ch_find_user_by_email($email);
+            if ($existing) {
+                ch_login_user($existing);
+                header('Location: dashboard.php'); exit;
+            }
+            $refCode = ch_make_ref_code();
+            $referrer = $refUser ? $refUser['ref_code'] : '';
+            ch_append_csv(ch_users_file(), [date('c'), $name, $phone, $email, $refCode, $referrer]);
+            ch_login_user(['phone' => $phone]);
             header('Location: dashboard.php'); exit;
-        } else { $err = $r['error'] ?? 'Google লগইন ব্যর্থ হয়েছে।'; }
-    }
-    if ($do === 'google_complete') {
-        $r = backend('googleComplete', [
-            'idToken' => $googleIdToken, 'name' => $googleName,
-            'phone' => trim($_POST['phone'] ?? ''), 'refCode' => saved_ref(),
-        ]);
-        if (!empty($r['ok'])) {
-            login_with_token($r['token']);
-            unset($_SESSION['ch_google_token'], $_SESSION['ch_google_name'], $_SESSION['ch_google_email']);
-            header('Location: dashboard.php'); exit;
-        } else { $err = $r['error'] ?? 'সমস্যা হয়েছে।'; $step = 'phone'; }
-    }
-    if ($do === 'appeal') {
-        $r = backend('appeal', [
-            'email' => trim($_POST['email'] ?? ''), 'phone' => trim($_POST['phone'] ?? ''), 'message' => trim($_POST['message'] ?? ''),
-        ]);
-        if (!empty($r['ok'])) $msg = $r['message'] ?? 'আবেদন জমা হয়েছে।';
-        else $err = $r['error'] ?? 'সমস্যা হয়েছে।';
+        }
     }
 }
-$clientId = getenv('GOOGLE_CLIENT_ID') ?: '';
-page_head('অ্যাকাউন্ট');
 ?>
-<h1>অ্যাকাউন্ট</h1>
-<p>Google দিয়ে অথবা Gmail-এ কোড নিয়ে — যেভাবে সুবিধা। এক নম্বরে ও এক Gmail দিয়ে একটাই অ্যাকাউন্ট।</p>
-<?php if ($msg) echo '<div class="msg ok">' . esc($msg) . '</div>'; ?>
-<?php if ($err) echo '<div class="msg err">' . esc($err) . '</div>'; ?>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>অ্যাকাউন্ট — CourseHaat BD</title>
+<style>
+ body{font-family:'Hind Siliguri',system-ui,sans-serif;background:#08131F;color:#fff;min-height:100vh;margin:0;padding:24px 16px}
+ .wrap{max-width:520px;margin:0 auto}
+ a{color:#2DD4BF;font-weight:700;text-decoration:none}
+ .card{background:linear-gradient(160deg,#0D2436,#081624);border:1px solid rgba(45,212,191,.3);border-radius:20px;padding:28px 24px;margin-bottom:18px}
+ h1{font-size:26px;margin:0 0 6px} h2{font-size:20px;margin:0 0 14px}
+ p{color:#CBD5E1;line-height:1.75}
+ label{display:block;margin:14px 0 6px;font-weight:700}
+ input{width:100%;padding:13px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:#08131F;color:#fff;font-size:16px;font-family:inherit;box-sizing:border-box}
+ button{width:100%;margin-top:18px;background:linear-gradient(90deg,#2DD4BF,#38BDF8);color:#08131F;font-weight:800;font-size:18px;border:none;border-radius:12px;padding:14px;cursor:pointer}
+ .err{background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.5);border-radius:10px;padding:12px;color:#FECACA}
+ .refnote{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.5);border-radius:10px;padding:12px;color:#FEF3C7}
+ .top{text-align:center;margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="index.php">← হোমে ফিরুন</a></div>
+  <?php if ($err): ?><div class="card"><div class="err"><?= ch_esc($err) ?></div></div><?php endif; ?>
+  <?php if ($refUser): ?><div class="card"><div class="refnote">🎉 তুমি <b><?= ch_esc($refUser['name']) ?></b>-এর রেফার লিংক দিয়ে এসেছো। অ্যাকাউন্ট খুললেই রেফার যুক্ত হয়ে যাবে।</div></div><?php endif; ?>
 
-<?php if ($step === 'otp'): ?>
-<div class="card">
-  <h2>যাচাইকরণ কোড বসান</h2>
-  <p class="muted"><?= esc($pendingEmail) ?> ঠিকানায় ৬ ডিজিটের কোড পাঠানো হয়েছে (৫ মিনিট মেয়াদ)।</p>
-  <form method="post">
-    <input type="hidden" name="do" value="verify_otp">
-    <label>কোড</label>
-    <input name="code" inputmode="numeric" maxlength="6" placeholder="______" required>
-    <button class="btn" type="submit">যাচাই করে ঢুকুন</button>
-  </form>
-</div>
-<?php elseif ($step === 'phone'): ?>
-<div class="card">
-  <h2>মোবাইল নম্বর দিন</h2>
-  <p class="muted"><?= esc($googleEmail) ?> — এই Google অ্যাকাউন্টের জন্য নতুন CourseHaat অ্যাকাউন্ট তৈরি হবে।</p>
-  <form method="post">
-    <input type="hidden" name="do" value="google_complete">
-    <label>মোবাইল নম্বর</label>
-    <input name="phone" inputmode="numeric" placeholder="01XXXXXXXXX" required>
-    <button class="btn" type="submit">অ্যাকাউন্ট খুলুন</button>
-  </form>
-</div>
-<?php else: ?>
-<?php if ($clientId): ?>
-<div class="card" style="text-align:center">
-  <h2>Google দিয়ে এক ক্লিকে</h2>
-  <div id="gbtn" style="display:flex;justify-content:center;margin-top:10px"></div>
-</div>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script>
-  window.addEventListener('load', function(){
-    if (!window.google) return;
-    google.accounts.id.initialize({ client_id: <?= json_encode($clientId) ?>, callback: function(resp){
-      var f = document.createElement('form'); f.method = 'post';
-      f.innerHTML = '<input type="hidden" name="do" value="google"><input type="hidden" name="id_token">';
-      f.querySelector('[name=id_token]').value = resp.credential;
-      document.body.appendChild(f); f.submit();
-    }});
-    google.accounts.id.renderButton(document.getElementById('gbtn'), { theme: 'filled_blue', size: 'large', text: 'continue_with' });
-  });
-</script>
-<?php endif; ?>
-
-<div class="row">
   <div class="card">
-    <h2>নতুন অ্যাকাউন্ট (সাইন আপ)</h2>
+    <h1>অ্যাকাউন্ট খুলুন</h1>
+    <p>শুধু নাম, মোবাইল নম্বর আর Gmail দিলেই হবে — <b>কোনো OTP বা ভেরিফিকেশন লাগবে না।</b> অ্যাকাউন্ট খুললেই তোমার রেফার লিংক আর ৳ বোনাস বক্স পেয়ে যাবে।</p>
     <form method="post">
-      <input type="hidden" name="do" value="request_otp">
-      <input type="hidden" name="purpose" value="signup">
+      <input type="hidden" name="do" value="signup">
       <label>আপনার নাম</label>
-      <input name="name" required minlength="3" placeholder="আপনার নাম">
+      <input name="name" required minlength="3" placeholder="যেমন: মোহাম্মদ বায়েজিদ" value="<?= ch_esc($_POST['name'] ?? '') ?>">
+      <label>মোবাইল নম্বর</label>
+      <input name="phone" required pattern="01[0-9]{9}" inputmode="numeric" placeholder="01XXXXXXXXX" value="<?= ch_esc($_POST['phone'] ?? '') ?>">
+      <label>Gmail ঠিকানা</label>
+      <input name="email" required type="email" placeholder="you@gmail.com" value="<?= ch_esc($_POST['email'] ?? '') ?>">
+      <button type="submit">অ্যাকাউন্ট খুলুন</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>আগে অ্যাকাউন্ট খুলেছো? লগইন করো</h2>
+    <p>যে মোবাইল আর Gmail দিয়ে খুলেছিলে, সেটা দিলেই ঢুকে যাবে।</p>
+    <form method="post">
+      <input type="hidden" name="do" value="login">
       <label>মোবাইল নম্বর</label>
       <input name="phone" required pattern="01[0-9]{9}" inputmode="numeric" placeholder="01XXXXXXXXX">
-      <label>Gmail ঠিকানা (কোড যাবে এই ঠিকানায়)</label>
+      <label>Gmail ঠিকানা</label>
       <input name="email" required type="email" placeholder="you@gmail.com">
-      <?php if (saved_ref()) echo '<p class="muted" style="margin-top:10px">রেফার কোড যুক্ত আছে: <b>' . esc(saved_ref()) . '</b></p>'; ?>
-      <button class="btn" type="submit">কোড পাঠান</button>
+      <button type="submit">লগইন করুন</button>
     </form>
   </div>
-  <div class="card">
-    <h2>লগইন</h2>
-    <form method="post">
-      <input type="hidden" name="do" value="request_otp">
-      <input type="hidden" name="purpose" value="login">
-      <label>আপনার Gmail ঠিকানা</label>
-      <input name="email" required type="email" placeholder="you@gmail.com">
-      <button class="btn secondary" type="submit">কোড পাঠান</button>
-    </form>
-    <p class="muted" style="margin-top:12px">কোড দিয়ে লগইন করলেই ড্যাশবোর্ডে চলে যাবেন — পাসওয়ার্ড মনে রাখার ঝামেলা নেই।</p>
-  </div>
 </div>
-
-<div class="card">
-  <h2>অ্যাকাউন্ট Ban হয়ে গেছে?</h2>
-  <p class="muted">ভুলবশত Ban হলে Active করার আবেদন করুন — অ্যাডমিন যাচাই করে সিদ্ধান্ত নেবেন।</p>
-  <form method="post">
-    <input type="hidden" name="do" value="appeal">
-    <div class="row">
-      <div><label>Gmail ঠিকানা</label><input name="email" required type="email" placeholder="you@gmail.com"></div>
-      <div><label>মোবাইল নম্বর</label><input name="phone" required placeholder="01XXXXXXXXX"></div>
-    </div>
-    <label>কী হয়েছিল, সংক্ষেপে লিখুন</label>
-    <textarea name="message" rows="3" placeholder="আপনার বক্তব্য"></textarea>
-    <button class="btn secondary" type="submit">আবেদন জমা দিন</button>
-  </form>
-</div>
-<?php endif; ?>
-<?php page_foot(); ?>
+</body>
+</html>
