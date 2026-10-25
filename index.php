@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CourseHaat BD — Digital Course Marketplace</title>
 <meta name="description" content="Facebook Page Monetization and YouTube Monetization — each course only BDT 200. bKash/Nagad payment.">
-<link rel="icon" href="assets/favicon.webp">
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:system-ui,sans-serif;background:#f1f5f9;color:#0f172a;line-height:1.7}
