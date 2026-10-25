@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/config.php';
+require __DIR__ . '/lib.php';
 
 function fail($msg) {
     http_response_code(422);
@@ -40,6 +41,9 @@ if (is_file($logFile)) {
 }
 $fh = fopen($logFile, 'a');
 if ($fh) { fputcsv($fh, [date('c'), $course['id'], $name, $phone, $method, $trx, $course['price']]); fclose($fh); }
+// Referral: buyer's first order credits the referrer (first referral 100, later 50).
+// Only if the buyer has an account created with a matching referral code, and only once per buyer.
+$refCredit = ch_credit_referral($phone, $name, $course['id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,6 +67,7 @@ if ($fh) { fputcsv($fh, [date('c'), $course['id'], $name, $phone, $method, $trx,
   <p>We have received your order for <b><?= htmlspecialchars($course['name'], ENT_QUOTES, 'UTF-8') ?></b>.<br>
   Payment: <?= $method === 'bkash' ? 'bKash' : 'Nagad' ?> · TrxID: <?= htmlspecialchars($trx, ENT_QUOTES, 'UTF-8') ?><br>
   Your access will stay active once payment is verified. Tap the button below to join the private Telegram group:</p>
+  <?php if (!empty($refCredit)): ?><p>🎉 Thanks to your referral, your referrer earned <b><?= (int)$refCredit ?> BDT</b> bonus.</p><?php endif; ?>
   <?php if (!empty($SITE['telegram'])): ?>
   <a class="join" href="<?= htmlspecialchars($SITE['telegram'], ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener">Join Telegram Group</a>
   <?php else: ?>
