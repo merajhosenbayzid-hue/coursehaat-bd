@@ -1,62 +1,56 @@
 <?php
-// ====== CourseHaat BD — মালিকের সেটিংস (শুধু এই ফাইল বদলালেই হবে) ======
+// CourseHaat BD — settings for the simple version
+// Change price / numbers only in this file.
 $SITE = [
-    'name'     => 'CourseHaat BD',
-    'tagline'  => 'ডিজিটাল কোর্সের হাট',
-    // পেমেন্ট নম্বর (দুটোই Personal) — চেকআউটে ক্রেতাকে দেখানো হয়
-    'bkash'    => '01774669723',
-    'nagad'    => '01910190761',
-    // Telegram প্রাইভেট গ্রুপের লিংক — পাবলিক repo-তে রাখা হয় না।
-    // Render-এ TELEGRAM_LINK env var থেকে আসে; লোকালে config.local.php (git-এর বাইরে) থেকে।
-    // শুধু লগইন করা ও কোর্স কেনা (enrolled) ব্যবহারকারীকে buy.php/dashboard.php-তে দেখানো হয়।
+    'name'   => 'CourseHaat BD',
+    'tagline'=> 'Digital Course Marketplace',
+    'bkash'  => '01774669723', // bKash Personal
+    'nagad'  => '01910190761', // Nagad Personal
+    // The Telegram link is not written here. It comes from the Render TELEGRAM_LINK env.
     'telegram' => getenv('TELEGRAM_LINK') ?: '',
 ];
-if ($SITE['telegram'] === '' && is_file(__DIR__ . '/config.local.php')) {
-    $LOCAL = require __DIR__ . '/config.local.php';
-    if (!empty($LOCAL['telegram'])) $SITE['telegram'] = $LOCAL['telegram'];
-}
 
 $COURSES = [
     [
         'id'    => 'facebook-monetization',
         'icon'  => '📘',
         'name'  => 'Facebook Page Monetization',
-        'desc'  => 'ফেসবুক পেজ থেকে আয় শুরু করার পুরো প্রসেস, একদম শুরু থেকে।',
+        'desc'  => 'The full process of starting to earn from a Facebook page, right from the beginning.',
         'price' => 200,
     ],
     [
         'id'    => 'youtube-monetization',
         'icon'  => '▶️',
         'name'  => 'YouTube Monetization',
-        'desc'  => 'ইউটিউব চ্যানেল মনিটাইজেশন পাওয়ার পুরো প্রসেস, একদম শুরু থেকে।',
+        'desc'  => 'The full process of getting monetization for a YouTube channel, right from the beginning.',
         'price' => 200,
     ],
 ];
 
-// প্রতিটি কোর্সের নিজস্ব পাঠ্যক্রম — প্রফেশনাল ভাষায়, Facebook ও YouTube আলাদা (user-এর নির্দেশ, Oct 24)
 $FB_SYSTEMS = [
-    'Professional Page সেটআপ ও সব গুরুত্বপূর্ণ সেটিংস',
-    '৭–১০ দিনের মনিটাইজেশন রোডম্যাপ',
-    'Faceless ভিডিও তৈরির পূর্ণ টিউটোরিয়াল',
-    'AI Automation: স্ক্রিপ্ট, ভয়েস ও এডিটিং',
-    'AI ভয়েসওভার টিউটোরিয়াল',
-    'মোবাইলে ভিডিও এডিটিং (CapCut)',
-    'মোবাইলে থাম্বনেইল ডিজাইন',
-    'Reels ভাইরাল হওয়ার কৌশল',
-    'কনটেন্ট আইডিয়া ও নিশ নির্বাচন',
-    'কপিরাইট-নিরাপদ কনটেন্টের নিয়মাবলি',
-    'মনিটাইজেশন আবেদন ও রিজেকশন সমাধান',
+    'Professional Page setup and all important settings',
+    '7–10 day monetization roadmap',
+    'Complete tutorial for creating faceless videos',
+    'AI Automation: script, voice and editing',
+    'AI voiceover tutorial',
+    'Mobile video editing (CapCut)',
+    'Mobile thumbnail design',
+    'Reels viral strategies',
+    'Content ideas and niche selection',
+    'Copyright-safe content rules',
+    'Monetization application and rejection solutions',
 ];
+
 $YT_SYSTEMS = [
-    'চ্যানেল তৈরি ও পূর্ণাঙ্গ সেটআপ',
-    'মনিটাইজেশন পরিকল্পনা: সাবস্ক্রাইবার ও ওয়াচ টাইম',
-    'Faceless ভিডিও তৈরির পূর্ণ টিউটোরিয়াল',
-    'AI Automation: স্ক্রিপ্ট, ভয়েস ও এডিটিং',
-    'AI ভয়েসওভার টিউটোরিয়াল',
-    'মোবাইলে ভিডিও এডিটিং (CapCut)',
-    'মোবাইলে থাম্বনেইল ডিজাইন',
-    'Shorts ভাইরাল হওয়ার কৌশল',
-    'টাইটেল, ডেসক্রিপশন ও হ্যাশট্যাগ SEO',
-    'কপিরাইট-নিরাপদ কনটেন্টের নিয়মাবলি',
-    'মনিটাইজেশন আবেদন ও রিজেকশন সমাধান',
+    'Channel creation and complete setup',
+    'Monetization plan: subscribers and watch time',
+    'Complete tutorial for creating faceless videos',
+    'AI Automation: script, voice and editing',
+    'AI voiceover tutorial',
+    'Mobile video editing (CapCut)',
+    'Mobile thumbnail design',
+    'Shorts viral strategies',
+    'Title, description and hashtag SEO',
+    'Copyright-safe content rules',
+    'Monetization application and rejection solutions',
 ];
