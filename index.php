@@ -35,6 +35,15 @@
   .box li::before{content:'✓ ';color:#0d9488;font-weight:900}
   .how{text-align:center}
   .how p{font-size:17px}
+  .paycards{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .paycard{display:flex;align-items:center;gap:12px;border-radius:14px;padding:12px 18px;text-align:left;color:#fff}
+  .paycard.bkash{background:#e2136e}
+  .paycard.nagad{background:linear-gradient(135deg,#f6921e,#ed752e)}
+  .paycard img{width:52px;height:52px;border-radius:12px;object-fit:cover;background:#fff}
+  .payname{font-size:14px;font-weight:700;opacity:.95}
+  .paynum2{font-size:20px;font-weight:900;letter-spacing:.5px}
+  .payicon{width:24px;height:24px;border-radius:6px;vertical-align:-6px;margin:0 4px}
+  .paynum img{width:40px;height:40px;border-radius:9px;vertical-align:middle;margin-right:8px}
   .how b{color:#b45309}
   .mission{text-align:center;padding:30px 10px}
   .mission h2{font-size:clamp(28px,5vw,40px);color:#0d9488}
@@ -44,7 +53,9 @@
   .modal{padding:24px}
   .modal label{display:block;font-size:14px;font-weight:700;margin:14px 0 6px}
   .modal input,.modal select{width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;font-size:16px;font-family:inherit}
-  .paynum{background:#f0fdfa;border:1px dashed #0d9488;border-radius:10px;padding:12px;margin-top:14px;display:none}
+  .paynum{border-radius:10px;padding:12px;margin-top:14px;display:none;color:#fff}
+  .paynum.bkash{background:#e2136e;display:block}
+  .paynum.nagad{background:linear-gradient(135deg,#f6921e,#ed752e);display:block}
   .close{float:right;background:none;border:none;font-size:22px;cursor:pointer}
   @media(max-width:560px){.tag{display:none}}
 </style>
@@ -88,7 +99,11 @@
 
   <section class="box how">
     <h3>How to Buy</h3>
-    <p>1. Tap “Buy Now” → 2. Send Money <b>200 BDT</b> to bKash <b><?= htmlspecialchars($SITE['bkash']) ?></b> / Nagad <b><?= htmlspecialchars($SITE['nagad']) ?></b> → 3. Confirm your order with the TrxID → 4. Join the Telegram group with the link</p>
+    <p>1. Tap “Buy Now” → 2. Send Money <b>200 BDT</b> to one of these numbers → 3. Confirm your order with the TrxID → 4. Join the Telegram group with the link</p>
+    <div class="paycards">
+      <div class="paycard bkash"><img src="assets/bkash.png" alt="bKash"><div><div class="payname">bKash (Personal)</div><div class="paynum2"><?= htmlspecialchars($SITE['bkash']) ?></div></div></div>
+      <div class="paycard nagad"><img src="assets/nagad.png" alt="Nagad"><div><div class="payname">Nagad (Personal)</div><div class="paynum2"><?= htmlspecialchars($SITE['nagad']) ?></div></div></div>
+    </div>
   </section>
 
   <section class="box">
@@ -106,7 +121,7 @@
   </section>
 
   <footer>
-    CourseHaat BD · bKash (Personal): <?= htmlspecialchars($SITE['bkash']) ?> · Nagad (Personal): <?= htmlspecialchars($SITE['nagad']) ?><br>
+    CourseHaat BD · <img class="payicon" src="assets/bkash.png" alt="bKash"> bKash (Personal): <?= htmlspecialchars($SITE['bkash']) ?> · <img class="payicon" src="assets/nagad.png" alt="Nagad"> Nagad (Personal): <?= htmlspecialchars($SITE['nagad']) ?><br>
     If you face any problem, you will get support in the Telegram group
   </footer>
 </div>
@@ -146,9 +161,9 @@ function openBuy(id, name, price){
 function showNum(){
   const m = document.getElementById('method').value;
   const box = document.getElementById('paynum');
-  if(!m){ box.style.display='none'; return; }
-  box.style.display='block';
-  box.innerHTML = '<b>' + (m==='bkash'?'bKash':'Nagad') + ' Personal:</b> <b>' + PAYNUM[m] + '</b><br>Send the course price to this number, then enter the TrxID.';
+  if(!m){ box.style.display='none'; box.className='paynum'; return; }
+  box.className = 'paynum ' + m;
+  box.innerHTML = '<img src="assets/' + m + '.png" alt=""> <b>' + (m==='bkash'?'bKash':'Nagad') + ' Personal:</b> <b>' + PAYNUM[m] + '</b><br>Send the course price to this number, then enter the TrxID.';
 }
 </script>
 </body>
