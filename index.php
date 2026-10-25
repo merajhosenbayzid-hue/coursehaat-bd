@@ -1,4 +1,4 @@
-<?php require __DIR__ . '/config.php'; ?>
+<?php require __DIR__ . '/config.php'; require __DIR__ . '/lib.php'; ch_save_ref_from_request(); $CH_USER = ch_current_user(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +16,8 @@
   .brand{font-size:22px;font-weight:800}
   .brand span{color:#0d9488}
   .tag{margin-left:auto;font-size:14px;color:#475569}
+  .nav{margin-left:12px;white-space:nowrap}
+  .nav a{display:inline-block;background:#0d9488;color:#fff;text-decoration:none;font-weight:800;font-size:14px;padding:9px 16px;border-radius:999px}
   .hero{text-align:center;padding:36px 0 10px}
   .hero h1{font-size:clamp(30px,6vw,48px);line-height:1.3;margin-bottom:12px}
   .hero h1 span{color:#0d9488}
@@ -57,7 +59,7 @@
   .paynum.bkash{background:#e2136e;display:block}
   .paynum.nagad{background:linear-gradient(135deg,#f6921e,#ed752e);display:block}
   .close{float:right;background:none;border:none;font-size:22px;cursor:pointer}
-  @media(max-width:560px){.tag{display:none}}
+  @media(max-width:560px){.tag{display:none}.nav{margin-left:auto}}
 </style>
 </head>
 <body>
@@ -66,11 +68,18 @@
     <img src="assets/favicon.png" alt="Corchat BD logo">
     <div class="brand" style="display:block;visibility:visible;font-size:24px;font-weight:800;color:#0f172a">Corchat <span style="color:#0d9488">BD</span></div>
     <div class="tag">Digital Course Marketplace</div>
+    <div class="nav"><?php if ($CH_USER): ?><a href="dashboard.php">👤 <?= ch_esc($CH_USER['name']) ?></a><?php else: ?><a href="account.php">Account</a><?php endif; ?></div>
   </header>
 
   <section class="hero">
     <h1>You scroll every day,<br>now turn that time into <span>income</span></h1>
     <p>From page and channel setup to monetization — a step-by-step curriculum. Get access to the private Telegram group right after purchase.</p>
+  </section>
+
+  <section class="box" style="text-align:center">
+    <h3>Refer &amp; Earn</h3>
+    <p>Share your referral code — when someone signs up with your code and buys a course, you get <b>100 BDT for your first referral</b> and <b>50 BDT for every later referral</b>. Unlimited referrals.</p>
+    <a class="buy" style="display:inline-block;width:auto;padding:12px 28px" href="account.php">Get My Referral Code →</a>
   </section>
 
   <section class="grid">
