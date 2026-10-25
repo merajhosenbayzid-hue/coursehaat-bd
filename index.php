@@ -63,7 +63,8 @@
 <body>
 <div class="wrap">
   <header>
-    <img src="assets/logo.webp" alt="Corchat BD logo">
+    <img src="assets/favicon.png" alt="Corchat BD logo">
+    <div class="brand">Corchat <span>BD</span></div>
     <div class="tag">Digital Course Marketplace</div>
   </header>
 
