@@ -6,13 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CourseHaat BD — Digital Course Marketplace</title>
 <meta name="description" content="Facebook Page Monetization and YouTube Monetization — each course only BDT 200. bKash/Nagad payment.">
-<link rel="icon" href="assets/logo.webp">
+<link rel="icon" href="assets/favicon.webp">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:system-ui,sans-serif;background:#f1f5f9;color:#0f172a;line-height:1.7}
   .wrap{max-width:900px;margin:0 auto;padding:0 18px}
   header{display:flex;align-items:center;gap:12px;padding:16px 0}
-  header img{width:46px;height:46px;border-radius:12px}
+  header img{height:46px;width:auto}
   .brand{font-size:22px;font-weight:800}
   .brand span{color:#0d9488}
   .tag{margin-left:auto;font-size:14px;color:#475569}
@@ -63,8 +63,7 @@
 <body>
 <div class="wrap">
   <header>
-    <img src="assets/logo.webp" alt="CourseHaat BD logo">
-    <div class="brand">Course<span>Haat</span> BD</div>
+    <img src="assets/logo.webp" alt="Corchat BD logo">
     <div class="tag">Digital Course Marketplace</div>
   </header>
 
